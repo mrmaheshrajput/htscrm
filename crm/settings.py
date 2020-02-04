@@ -25,7 +25,12 @@ SECRET_KEY = 'y=ru3+b)$km=_di(h!x=4k@ufvsd3232dy&1kzn=69ri5cdahmg7omyo'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    'nameofapp.herokuapp.com',
+    'hitech-crm.herokuapp.com',
+    ]
 
 
 # Application definition
