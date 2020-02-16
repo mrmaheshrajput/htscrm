@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Customers Master{% endblock %}
+{% block body %}
+
+{% load static %}
+      {% if messages %}
+      <div class="messages">
+      {% for message in messages %}
+      <input type="hidden" value="{{ message }}" id="success">
+      {% endfor %}
+      </div>
+      {% endif %}
+      <div class="row">
+        <div class="col-md-6">
+          <div class="text-left">
+            <button onclick="window.history.back()" class="btn btn-info btn-round">Go Back</button>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="text-right">
+            <a href="{% url 'customers:customer_create_view' %}" class="btn btn-primary btn-round">+ Add New</a>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header card-header-primary">
+              <h4 class="card-title ">View Customers</h4>
+              <p class="card-category">This table shows all the saved customers. Click on edit icon to modify the saved details.</p>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead class=" text-primary">
+                    <th>
+                      Sr. No.
+                    </th>
+                    <th>
+                      Customer Name
+                    </th>
+                    <th>
+                      Contact Number
+                    </th>
+                    <th>
+                      Pending Calls
+                    </th>
+                    <th>
+                      Pending Visit
+                    </th>
+                    <th>
+                      Action
+                    </th>
+                  </thead>
+                  <tbody>
+                    {% for item in objects %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td>{{ item.name }}</td>
+                      <td>{{ item.contact_number }}</td>
+                      <td>0</td>
+                      <td>0</td>
+                      <td><a href>Action</a></td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+{% endblock %}

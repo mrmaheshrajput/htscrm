@@ -2,69 +2,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>CRM - Hitech Solutions{% block title %}{% endblock %}</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimal-ui" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-  <!-- for ios 7 style, multi-resolution icon of 152x152 -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-barstyle" content="black-translucent">
-  <link rel="apple-touch-icon" href="{% static 'assets/images/logo.png' %}">
-  <meta name="apple-mobile-web-app-title" content="CRM">
-  <!-- for Chrome on Android, multi-resolution icon of 196x196 -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <link rel="shortcut icon" sizes="196x196" href="{% static 'assets/images/logo.png' %}">
-
-  <!-- style -->
-  <link rel="stylesheet" href="{% static 'assets/animate.css/animate.min.css' %}" type="text/css" />
-  <link rel="stylesheet" href="{% static 'assets/glyphicons/glyphicons.css' %}" type="text/css" />
-  <link rel="stylesheet" href="{% static 'assets/font-awesome/css/font-awesome.min.css' %}" type="text/css" />
-  <link rel="stylesheet" href="{% static 'assets/material-design-icons/material-design-icons.css' %}" type="text/css" />
-
-  <link rel="stylesheet" href="{% static 'assets/bootstrap/dist/css/bootstrap.min.css' %}" type="text/css" />
-  <!-- build:css ../assets/styles/app.min.css -->
-  <link rel="stylesheet" href="{% static 'assets/styles/app.css' %}" type="text/css" />
-  <!-- endbuild -->
-  <link rel="stylesheet" href="{% static 'assets/styles/font.css' %}" type="text/css" />
+	<title>CRM - Hitech Solutions{% block title %}{% endblock %}</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="icon" type="image/png" href="{% static 'assets/img/icons/favicon.ico' %}"/>
+	<link rel="stylesheet" type="text/css" href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'assets/fonts/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'assets/vendor/animate/animate.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'assets/vendor/css-hamburgers/hamburgers.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'assets/vendor/select2/select2.min.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'assets/css/login-util.css' %}">
+	<link rel="stylesheet" type="text/css" href="{% static 'assets/css/login-main.css' %}">
 </head>
 <body>
-  <div class="app" id="app">
+  {% block body %}
+  {% endblock %}
+	<script src="{% static 'assets/vendor/jquery/jquery-3.2.1.min.js' %}"></script>
+	<script src="{% static 'assets/vendor/bootstrap/js/popper.js' %}"></script>
+	<script src="{% static 'assets/vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'assets/vendor/select2/select2.min.js' %}"></script>
+	<script src="{% static 'assets/vendor/tilt/tilt.jquery.min.js' %}"></script>
+	<script >
+		$('.js-tilt').tilt({
+			scale: 1.1
+		})
+	</script>
+	<script src="{% static 'assets/js/login-main.js' %}"></script>
 
-{% block body %}
-{% endblock %}
-
-  </div>
-<!-- build:js scripts/app.html.js -->
-<!-- jQuery -->
-  <script src="{% static 'libs/jquery/jquery/dist/jquery.js' %}"></script>
-<!-- Bootstrap -->
-  <script src="{% static 'libs/jquery/tether/dist/js/tether.min.js' %}"></script>
-  <script src="{% static 'libs/jquery/bootstrap/dist/js/bootstrap.js' %}"></script>
-<!-- core -->
-  <script src="{% static 'libs/jquery/underscore/underscore-min.js' %}"></script>
-  <script src="{% static 'libs/jquery/jQuery-Storage-API/jquery.storageapi.min.js' %}"></script>
-  <script src="{% static 'libs/jquery/PACE/pace.min.js' %}"></script>
-
-  <script src="{% static 'scripts/config.lazyload.js' %}"></script>
-
-  <script src="{% static 'scripts/palette.js' %}"></script>
-  <script src="{% static 'scripts/ui-load.js' %}"></script>
-  <script src="{% static 'scripts/ui-jp.js' %}"></script>
-  <script src="{% static 'scripts/ui-include.js' %}"></script>
-  <script src="{% static 'scripts/ui-device.js' %}"></script>
-  <script src="{% static 'scripts/ui-form.js' %}"></script>
-  <script src="{% static 'scripts/ui-nav.js' %}"></script>
-  <script src="{% static 'scripts/ui-screenfull.js' %}"></script>
-  <script src="{% static 'scripts/ui-scroll-to.js' %}"></script>
-  <script src="{% static 'scripts/ui-toggle-class.js' %}"></script>
-
-  <script src="{% static 'scripts/app.js' %}"></script>
-
-  <!-- ajax -->
-  <script src="{% static 'libs/jquery/jquery-pjax/jquery.pjax.js' %}"></script>
-  <script src="{% static 'scripts/ajax.js' %}"></script>
-<!-- endbuild -->
-{% block script %}{% endblock %}
 </body>
 </html>

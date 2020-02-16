@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Add Customer{% endblock %}
+{% block body %}
+
+{% load static %}
+      {% if error %}
+        <input type="hidden" id="error">
+      {% endif %}
+      <div class="row">
+        <div class="col-md-6">
+          <div class="text-left">
+            <button onclick="window.history.back()" class="btn btn-info btn-round">Go Back</button>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="text-right">
+            <a href="{% url 'customers:customer_detail_view' %}" class="btn btn-primary btn-round">View All Customers</a>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header card-header-primary">
+              <h4 class="card-title">Add Customer Form</h4>
+              <p class="card-category">This form add customers to database. Only customers that are added here can be recorded in calls section.</p>
+            </div>
+            <div class="card-body">
+              <form method="post" action="{% url 'customers:customer_create_view' %}">{% csrf_token %}
+                <div class="row">
+                  <div class="col-md-7">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Full name</label>
+                      <input type="text" class="form-control" name="name">
+                    </div>
+                  </div>
+                  <div class="col-md-5">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Calling Number</label>
+                      <input type="text" class="form-control" name="calling_number">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Contact no. is same as calling number</label>
+                      <input type="checkbox" class="form-control">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Contact Number</label>
+                      <input type="text" class="form-control" name="contact_number">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label>Address</label>
+                      <div class="form-group">
+                        <label class="bmd-label-floating">Complate address of the customer without city, state and pin code</label>
+                        <textarea class="form-control" rows="5" name="address"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">City</label>
+                      <input type="text" class="form-control" name="city">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">State</label>
+                      <input type="text" class="form-control" name="state">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Postal Code</label>
+                      <input type="text" class="form-control" name="pin">
+                    </div>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary pull-right">Save</button>
+                <div class="clearfix"></div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+{% endblock %}

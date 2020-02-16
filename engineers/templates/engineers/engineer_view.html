@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}Engineers Master{% endblock %}
+
+{% block body %}
+
+{% load static %}
+
+      {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+            {% if message|safe == "success" %}
+              <input type="hidden" value="{{ message }}" id="success">
+            {% elif message|safe == "fail" %}
+              <input type="hidden" id="error" value="{{ error }}">
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+      
+      <div class="row">
+        <div class="col-md-6">
+          <div class="text-left">
+            <button onclick="window.history.back()" class="btn btn-info btn-round">Go Back</button>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="text-right">
+            <button onclick="showEngineerForm()" class="btn btn-primary btn-round">+ Add New</button>
+          </div>
+        </div>
+        <div class="col-md-8" id="add-engineer-form">
+          <div class="card">
+            <div class="card-header card-header-primary">
+              <h4 class="card-title">Add Engineer</h4>
+            </div>
+            <div class="card-body">
+              <form method="post" action="{% url 'engineers:engineer_view' %}">{% csrf_token %}
+                <div class="row">
+                  <div class="col-md-7">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Full name</label>
+                      <input type="text" class="form-control" name="engineer_name">
+                    </div>
+                  </div>
+                  <div class="col-md-5">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Contact Number</label>
+                      <input type="text" class="form-control" name="mobile">
+                    </div>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary pull-right">Save</button>
+                <div class="clearfix"></div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-header card-header-primary">
+              <h4 class="card-title ">Engineers</h4>
+              <p class="card-category">The following table shows all the saved engineers. Click on edit icon to modify or delete.</p>
+            </div>
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table">
+                  <thead class=" text-primary">
+                    <th>
+                      Sr. No.
+                    </th>
+                    <th>
+                      Name
+                    </th>
+                    <th>
+                      Contact Number
+                    </th>
+                    <th>
+                      Total Visits (Monthly)
+                    </th>
+                    <th>
+                      Pending Visits (Total)
+                    </th>
+                    <th>
+                      Action
+                    </th>
+                  </thead>
+                  <tbody>
+                    {% for item in objects %}
+                    <tr>
+                      <td>{{ forloop.counter }}</td>
+                      <td>{{ item.engineer_name }}</td>
+                      <td>{{ item.mobile }}</td>
+                      <td>0</td>
+                      <td>0</td>
+                      <td>
+                        <a class="nav-link" href="http://example.com" id="itemDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <i class="material-icons">edit</i>
+                          <p class="d-lg-none d-md-block">
+                            Edit / Delete
+                          </p>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="itemDropdownMenuLink">
+                          <a class="dropdown-item" href="#" data-id="{{ item.id }}">Edit</a>
+                          <a class="engineer-delete dropdown-item" href="#" data-toggle="modal" data-target="#exampleModalCenter" data-id="{{ item.id }}">Delete</a>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Are you sure?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <form method="post" action="{% url 'engineers:engineer_delete_view' id=2 %}">{% csrf_token %}
+                <div class="modal-body">
+                  Deletion is permanent and deleted items cannot be recovered. Please make necessary backups before deletion.
+                  <input type="hidden" id="engineer-id">
+                </div>
+                <div class="modal-footer">
+                  <button type="submit" class="btn btn-secondary">Yes</button>
+                  <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- Modal End -->
+
+      </div>
+{% endblock %}
+{% block script %}
+<script>
+  $(document).on("click", ".engineer-delete", function () {
+    const pkid    = $(this).data('id');
+    $(".modal-body #engineer-id").val(pkid);
+  });
+
+
+function showEngineerForm() {
+  var engineerForm = document.getElementById('add-engineer-form');
+  engineerForm.style.display = 'block'
+  engineerForm.style.height = 'auto';
+  engineerForm.style.width = 'auto';
+  engineerForm.style.position = 'relative';
+}
+</script>
+{% endblock %}
