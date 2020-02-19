@@ -86,26 +86,47 @@ WSGI_APPLICATION = 'crm.wsgi.application'
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'NAME': 'd4um7j7retuu86',
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'USER': 'sauysazixsnkbf',
-    #     'PASSWORD': 'c4cc5e3bfe2d96890d139f2f21c09b92cf3f78c1eb22851413aa0622c5c9198f',
-    #     'HOST': 'ec2-54-247-70-127.eu-west-1.compute.amazonaws.com',
-    #     'PORT': '5432',
-    #   'export DATABASE_URL="postgres://sauysazixsnkbf:c4cc5e3bfe2d96890d139f2f21c09b92cf3f78c1eb22851413aa0622c5c9198f@ec2-54-247-70-127.eu-west-1.compute.amazonaws.com:5432/d4um7j7retuu86"'
-    # }
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': 'd4um7j7retuu86',
+        'ENGINE': 'django.db.backends.postgresql',
+        'USER': 'sauysazixsnkbf',
+        'PASSWORD': 'c4cc5e3bfe2d96890d139f2f21c09b92cf3f78c1eb22851413aa0622c5c9198f',
+        'HOST': 'ec2-54-247-70-127.eu-west-1.compute.amazonaws.com',
+        'PORT': '5432',
+        'TEST': {
+            'NAME': 'd4ehltokp1f471',
+            'ENGINE': 'django.db.backends.postgresql',
+            'USER': 'iyjudzjvxdtdyk',
+            'PASSWORD': '9093094ceef2602664b30fa6d275610456b76922139105ac19761f76ecde85b5',
+            'HOST': 'ec2-54-246-90-10.eu-west-1.compute.amazonaws.com',
+            'PORT': '5432',
+        }
+      #'export DATABASE_URL="postgres://sauysazixsnkbf:c4cc5e3bfe2d96890d139f2f21c09b92cf3f78c1eb22851413aa0622c5c9198f@ec2-54-247-70-127.eu-west-1.compute.amazonaws.com:5432/d4um7j7retuu86"'
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    # }
 }
 
 # Heroku PostgreSQL Database
 import dj_database_url
+#
+# db_from_env = dj_database_url.config(conn_max_age=600)
+# DATABASES['default'].update(db_from_env)
 
-db_from_env = dj_database_url.config(conn_max_age=600)
-DATABASES['default'].update(db_from_env)
+TEST_DATABASES = {
+    # 'default': {
+    #     'NAME': 'd4ehltokp1f471',
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'USER': 'iyjudzjvxdtdyk',
+    #     'PASSWORD': '9093094ceef2602664b30fa6d275610456b76922139105ac19761f76ecde85b5',
+    #     'HOST': 'ec2-54-246-90-10.eu-west-1.compute.amazonaws.com',
+    #     'PORT': '5432',
+    #     # export TEST_DATABASE_URL="postgres://iyjudzjvxdtdyk:9093094ceef2602664b30fa6d275610456b76922139105ac19761f76ecde85b5@ec2-54-246-90-10.eu-west-1.compute.amazonaws.com:5432/d4ehltokp1f471"
+    # }
+    'default': dj_database_url.config(env='TEST_DATABASE_URL')
+}
 
 
 # Password validation

@@ -17,7 +17,7 @@
 
 <body>
   <div class="wrapper ">
-    <div class="sidebar" data-color="azure" data-background-color="white" data-image="{% static 'assets/img/sidebar-1.jpg' %}">
+    <div class="sidebar" data-color="azure" data-background-color="white" data-image="{% static 'assets/img/sidebar-3.jpg' %}">
       <div class="logo">
         <a class="simple-text logo-mini">
           CRM
@@ -66,7 +66,7 @@
       <nav class="navbar navbar-expand-lg navbar-transparent navbar-absolute fixed-top ">
         <div class="container-fluid">
           <div class="navbar-wrapper">
-            <a class="navbar-brand" href="javascript:;">Dashboard</a>
+            <button onclick="window.history.back()" class="btn btn-info btn-round">Go Back</button>
           </div>
           <button class="navbar-toggler" type="button" data-toggle="collapse" aria-controls="navigation-index" aria-expanded="false" aria-label="Toggle navigation">
             <span class="sr-only">Toggle navigation</span>
@@ -113,25 +113,27 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('error')) {
-      failure()
+      const message = document.getElementById('error').value
+      failure(message)
     }
     if (document.getElementById('success')) {
-      success()
+      const message = document.getElementById('success').value
+      success(message)
     }
   });
 
-  function success() {
+  function success(message) {
     const notify = $.notify({
-    	message: '<b>Success</b> - Customer added successfully!<br>(This notification will auto close)'
+    	message: message + '<br><b>This notification will auto close</b>'
     },{
     	type: 'success'
     });
     return notify;
   };
 
-  function failure() {
+  function failure(message) {
     const notify = $.notify({
-    	message: '<b>Failure</b> - Invalid data<br>(This notification will auto close)'
+    	message: message + '<br><b>This notification will auto close</b>'
     },{
     	type: 'danger'
     });

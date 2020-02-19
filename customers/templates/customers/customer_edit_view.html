@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Add Customer{% endblock %}
+{% block title %}Edit Customer{% endblock %}
 {% block body %}
 
 {% load static %}
@@ -24,56 +24,39 @@
         </div>
         <div class="col-md-8">
           <div class="card">
-            <div class="card-header card-header-primary">
-              <h4 class="card-title">Add Customer Form</h4>
-              <p class="card-category">This form add customers to database. Only customers that are added here can be recorded in calls section.</p>
+            <div class="card-header card-header-warning">
+              <h4 class="card-title">Edit customer</h4>
+              <p class="card-category">Click on save after modifing required details.</p>
             </div>
             <div class="card-body">
-              <form method="post" action="{% url 'customers:customer_create_view' %}">{% csrf_token %}
+              <form method="post" action="{% url 'customers:customer_edit_view' id=object.id %}">{% csrf_token %}
                 <div class="row">
                   <div class="col-md-7">
                     <div class="form-group">
                       <label class="bmd-label-floating">Full name</label>
-                      <input type="text" class="form-control" name="name">
+                      <input type="text" class="form-control" name="name" value="{{ object.name }}" required>
                     </div>
                   </div>
                   <div class="col-md-5">
                     <div class="form-group">
                       <label class="bmd-label-floating">Calling Number</label>
-                      <input type="text" class="form-control" name="calling_number" id="calling_number">
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="form-group">
-                    <div class="col-md-12">
-                      <div class="form-check">
-                        <label class="form-check-label">
-                          <input class="form-check-input" type="checkbox" id="copy_number">
-                          <span class="form-check-sign">
-                            <span class="check"></span>
-                          </span>Check if calling number is same as contact number
-                        </label>
-                      </div>
+                      <input type="text" class="form-control" name="calling_number" value="{{ object.calling_number }}" required>
                     </div>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-md-6">
-                    <div class="form-group" id="contact_number_parent">
+                    <div class="form-group">
                       <label class="bmd-label-floating">Contact Number</label>
-                      <input type="text" class="form-control" name="contact_number" id="contact_number">
+                      <input type="text" class="form-control" name="contact_number" value="{{ object.contact_number }}" required>
                     </div>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-md-12">
                     <div class="form-group">
-                      <label>Address</label>
-                      <div class="form-group">
                         <label class="bmd-label-floating">Complate address of the customer without city, state and pin code</label>
-                        <textarea class="form-control" rows="5" name="address"></textarea>
-                      </div>
+                        <input type="text" class="form-control" rows="5" name="address" value="{% if object.address %}{{ object.address }} {% endif %}" required>
                     </div>
                   </div>
                 </div>
@@ -81,23 +64,23 @@
                   <div class="col-md-4">
                     <div class="form-group">
                       <label class="bmd-label-floating">City</label>
-                      <input type="text" class="form-control" name="city">
+                      <input type="text" class="form-control" name="city" value="{% if object.city %}{{ object.city }} {% endif %}">
                     </div>
                   </div>
                   <div class="col-md-4">
                     <div class="form-group">
                       <label class="bmd-label-floating">State</label>
-                      <input type="text" class="form-control" name="state">
+                      <input type="text" class="form-control" name="state" value="{% if object.state %}{{ object.state }} {% endif %}">
                     </div>
                   </div>
                   <div class="col-md-4">
                     <div class="form-group">
                       <label class="bmd-label-floating">Postal Code</label>
-                      <input type="text" class="form-control" name="pin">
+                      <input type="text" class="form-control" name="pin" value="{% if object.pin %}{{ object.pin }} {% endif %}" required>
                     </div>
                   </div>
                 </div>
-                <button type="submit" class="btn btn-primary pull-right">Save</button>
+                <button type="submit" class="btn btn-success pull-right">Save</button>
                 <div class="clearfix"></div>
               </form>
             </div>
@@ -105,15 +88,4 @@
         </div>
       </div>
 
-{% endblock %}
-
-{% block script %}
-<script>
-  $(document).on("click", "#copy_number", function () {
-    const pkid    = $(this).val;
-    const number  = document.getElementById('calling_number').value;
-    document.getElementById('contact_number').value = number;
-    document.getElementById('contact_number_parent').className += ' is-focused';
-  });
-</script>
 {% endblock %}

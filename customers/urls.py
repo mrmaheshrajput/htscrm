@@ -1,9 +1,16 @@
 from django.urls import path
 
-from customers.views import CustomerCreateView, CustomerDetailView
+from customers.views import (
+    CustomerCreateView,
+    CustomerDetailView,
+    CustomerDeleteView,
+    CustomerEditView
+    )
 
 app_name    = 'customers'
 urlpatterns = [
     path('' ,CustomerDetailView.as_view(), name='customer_detail_view'),
     path('create/' ,CustomerCreateView.as_view(), name='customer_create_view'),
+    path('delete/',CustomerDeleteView.as_view(), name='customer_delete_view'),
+    path('edit/<int:id>',CustomerEditView.as_view(), name='customer_edit_view'),
 ]

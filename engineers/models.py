@@ -5,10 +5,12 @@ from django.urls import reverse
 
 class Engineer(models.Model):
     mobile_regex            = RegexValidator(regex=r'^\+?1?\d{10,11}$', message="Mobile number must be entered in the format: '987xxxxxxx'")
-    added_by                = models.ForeignKey(User, on_delete=models.SET_NULL,null=True)
+    added_by                = models.ForeignKey(User, on_delete=models.SET_NULL,null=True, related_name='added_by')
     engineer_name           = models.CharField(max_length=120)
     mobile                  = models.CharField(validators=[mobile_regex], max_length=12)
     timestamp               = models.DateTimeField(auto_now_add=True)
+    edited_by               = models.ForeignKey(User, on_delete=models.SET_NULL,null=True, related_name='edited_by')
+    edit_datetime           = models.DateTimeField(blank=True,null=True)
 
     def __str__(self):
         return self.engineer_name

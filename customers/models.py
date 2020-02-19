@@ -14,8 +14,10 @@ class ClientDetails(models.Model):
     city                = models.CharField(max_length=50,blank=True,null=True)
     state               = models.CharField(max_length=50,blank=True,null=True)
     pin                 = models.IntegerField(blank=True,null=True)
-    created_by          = models.ForeignKey(User, on_delete=models.SET_NULL,null=True)
+    created_by          = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,related_name='customer_created_by')
     timestamp           = models.DateTimeField(auto_now_add=True)
+    edited_by           = models.ForeignKey(User,on_delete=models.SET_NULL,null=True,related_name='customer_edited_by')
+    edit_datetime       = models.DateTimeField(null=True,blank=True)
 
     def __str__(self):
         return 'Customer: %s, number: %s' % (self.name, self.contact_number)

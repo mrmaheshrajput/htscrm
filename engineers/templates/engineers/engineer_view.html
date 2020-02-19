@@ -9,22 +9,17 @@
       {% if messages %}
         <div class="messages">
           {% for message in messages %}
-            {% if message|safe == "success" %}
+            {% if "Success" in message|safe %}
               <input type="hidden" value="{{ message }}" id="success">
-            {% elif message|safe == "fail" %}
-              <input type="hidden" id="error" value="{{ error }}">
+            {% elif "Failed" in message|safe %}
+              <input type="hidden" id="error" value="{{ message }}">
             {% endif %}
           {% endfor %}
         </div>
       {% endif %}
-      
+
       <div class="row">
-        <div class="col-md-6">
-          <div class="text-left">
-            <button onclick="window.history.back()" class="btn btn-info btn-round">Go Back</button>
-          </div>
-        </div>
-        <div class="col-md-6">
+        <div class="col-md-12">
           <div class="text-right">
             <button onclick="showEngineerForm()" class="btn btn-primary btn-round">+ Add New</button>
           </div>
@@ -81,30 +76,68 @@
                     <th>
                       Pending Visits (Total)
                     </th>
-                    <th>
-                      Action
-                    </th>
+                    <th></th>
                   </thead>
                   <tbody>
                     {% for item in objects %}
                     <tr>
                       <td>{{ forloop.counter }}</td>
-                      <td>{{ item.engineer_name }}</td>
+                      <td>
+                        {{ item.engineer_name }}<br>
+                        {% if item.edited_by %}
+                        <p class="text-muted">Edited by: {{ item.edited_by }}, on {{ item.edit_datetime }}</p>
+                        {% endif %}
+                      </td>
                       <td>{{ item.mobile }}</td>
                       <td>0</td>
                       <td>0</td>
-                      <td>
-                        <a class="nav-link" href="http://example.com" id="itemDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <td class="td-actions text-right">
+                        <button
+                          type="button"
+                          rel="tooltip"
+                          title="Edit"
+                          class="btn btn-primary btn-link btn-sm engineer-edit"
+                          data-toggle="modal"
+                          data-target="#engineerEditModal"
+                          data-id="{{ item.id }}"
+                          data-name="{{ item.engineer_name}}"
+                          data-mobile="{{ item.mobile }}">
+                            <i class="material-icons">edit</i>
+                        </button>
+                        <button
+                          type="button"
+                          rel="tooltip"
+                          title="Delete"
+                          class="btn btn-danger btn-link btn-sm engineer-delete"
+                          data-toggle="modal"
+                          data-target="#confirmEngineerDelete"
+                          data-id="{{ item.id }}">
+                            <i class="material-icons">close</i>
+                        </button>
+                      </td>
+                      <!-- <td>
+                        <a class="nav-link" href="#" id="itemDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           <i class="material-icons">edit</i>
                           <p class="d-lg-none d-md-block">
                             Edit / Delete
                           </p>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="itemDropdownMenuLink">
-                          <a class="dropdown-item" href="#" data-id="{{ item.id }}">Edit</a>
-                          <a class="engineer-delete dropdown-item" href="#" data-toggle="modal" data-target="#exampleModalCenter" data-id="{{ item.id }}">Delete</a>
+                          <a
+                            class="engineer-edit dropdown-item"
+                            href="#" data-toggle="modal"
+                            data-target="#engineerEditModal"
+                            data-id="{{ item.id }}"
+                            data-name="{{ item.engineer_name}}"
+                            data-mobile="{{ item.mobile }}">Edit</a>
+                          <a
+                            class="engineer-delete dropdown-item"
+                            href="#"
+                            data-toggle="modal"
+                            data-target="#confirmEngineerDelete"
+                            data-id="{{ item.id }}">Delete</a>
                         </div>
-                      </td>
+                      </td> -->
                     </tr>
                     {% endfor %}
                   </tbody>
@@ -114,8 +147,8 @@
           </div>
         </div>
 
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <!-- Engineer Delete Modal -->
+        <div class="modal fade" id="confirmEngineerDelete" tabindex="-1" role="dialog" aria-hidden="true">
           <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
               <div class="modal-header">
@@ -124,14 +157,55 @@
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
-              <form method="post" action="{% url 'engineers:engineer_delete_view' id=2 %}">{% csrf_token %}
-                <div class="modal-body">
+              <form method="post" action="{% url 'engineers:engineer_delete_view' %}">{% csrf_token %}
+                <div class="modal-body for-delete">
                   Deletion is permanent and deleted items cannot be recovered. Please make necessary backups before deletion.
-                  <input type="hidden" id="engineer-id">
+                  <input type="hidden" id="engineer-id" name="engineer-id">
                 </div>
                 <div class="modal-footer">
                   <button type="submit" class="btn btn-secondary">Yes</button>
                   <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- Modal End -->
+
+        <!-- Engineer Edit Modal -->
+        <div class="modal fade" id="engineerEditModal" tabindex="-1" role="dialog" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Edit Engineer</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <form method="post" action="{% url 'engineers:engineer_edit_view' %}">{% csrf_token %}
+                <div class="modal-body for-edit">
+                  <div class="col-md-12">
+                          <div class="row">
+                            <input type="hidden" name="eng-id" id="pre-id">
+                            <div class="col-md-7">
+                              <div class="form-group bmd-form-group is-focused is-filled">
+                                <label class="bmd-label-floating">Full name</label>
+                                <input type="text" class="form-control" name="engineer_name" id="pre-name">
+                              </div>
+                            </div>
+                            <div class="col-md-5">
+                              <div class="form-group bmd-form-group is-focused is-filled">
+                                <label class="bmd-label-floating">Contact Number</label>
+                                <input type="text" class="form-control" name="mobile" id="pre-mobile">
+                              </div>
+                            </div>
+                          </div>
+                          <div class="clearfix"></div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                  <button type="submit" class="btn btn-success">Update</button>
                 </div>
               </form>
             </div>
@@ -145,9 +219,17 @@
 <script>
   $(document).on("click", ".engineer-delete", function () {
     const pkid    = $(this).data('id');
-    $(".modal-body #engineer-id").val(pkid);
+    $(".for-delete #engineer-id").val(pkid);
   });
 
+  $(document).on("click", ".engineer-edit", function () {
+    const pkid    = $(this).data('id');
+    const name    = $(this).data('name');
+    const mobile  = $(this).data('mobile');
+    $(".for-edit #pre-id").val(pkid);
+    $(".for-edit #pre-name").val(name);
+    $(".for-edit #pre-mobile").val(mobile);
+  });
 
 function showEngineerForm() {
   var engineerForm = document.getElementById('add-engineer-form');
