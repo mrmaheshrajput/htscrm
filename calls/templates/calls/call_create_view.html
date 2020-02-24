@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+{% block title %}Register Call{% endblock %}
+{% block body %}
+
+{% load static %}
+
+      {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+            {% if "Success" in message|safe %}
+              <input type="hidden" value="{{ message }}" id="success">
+            {% elif "Failed" in message|safe %}
+              <input type="hidden" id="error" value="{{ message }}">
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-right">
+            <a href="{% url 'calls:calls_list_view' %}" class="btn btn-primary btn-round"><span class="glyphicon glyphicon-menu-hamburger"></span> View All Calls</a>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header card-header-primary">
+              <h4 class="card-title">Register Call Form</h4>
+              <p class="card-category">This form adds calls. Once added these calls can be assigned from calls page later.</p>
+            </div>
+            <div class="card-body">
+              <form method="post" autocomplete="off" action="{% url 'calls:call_register_view' %}">{% csrf_token %}
+                <div class="row">
+                  <div class="col-md-9">
+                    <div class="form-group awesomplete">
+                      <label class="bmd-label-floating">Select Customer</label>
+                      <input type="text" class="form-control" name="customer" id="customer">
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group">
+                      <button type="button"
+                        class="btn btn-info pull-right"
+                        data-toggle="modal"
+                        data-target="#callRegister">New Customer</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group awesomplete">
+                      <label class="bmd-label-floating">Complain Nature</label>
+                      <input type="text" class="form-control" name="complaint_nature" id="complaints">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group" id="contact_number_parent">
+                      <label class="bmd-label-floating">Product Brand</label>
+                      <input type="text" class="form-control" name="brand">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Product Name</label>
+                      <input type="text" class="form-control" name="product_name">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Product Serial</label>
+                      <input type="text" class="form-control" name="product_serial">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Product Coverage</label>
+                      <input type="text" class="form-control" name="product_coverage">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Select appointment Date:</label>
+                        <div class="row" style="margin-left:0">
+                          {{ form.appointment_date }}
+                        </div>
+                      <!-- <input type="text" class="form-control" name="appointment_date" id="datepicker"> -->
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Appointment Time</label>
+                      <!-- <div class="row" style="margin-left:0">
+                        {{ form.appointment_time }}
+                      </div> -->
+                      <input type='text' class="form-control" name="appointment_time" id="timepicker">
+                    </div>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary pull-right">Save</button>
+                <div class="clearfix"></div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Call Register Modal -->
+      <div class="modal fade" id="callRegister" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalCenterTitle">Add Customer</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <form method="post" action="{% url 'customers:customer_create_view' %}">{% csrf_token %}
+              <div class="modal-body for-delete">
+                <div class="row">
+                  <div class="col-md-7">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Full name</label>
+                      <input type="text" class="form-control" name="name">
+                      <input type="hidden" name="next" value="{{ request.path }}">
+                    </div>
+                  </div>
+                  <div class="col-md-5">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Calling Number</label>
+                      <input type="text" class="form-control" name="calling_number" id="calling_number">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group">
+                    <div class="col-md-12">
+                      <div class="form-check">
+                        <label class="form-check-label">
+                          <input class="form-check-input" type="checkbox" id="copy_number">
+                          <span class="form-check-sign">
+                            <span class="check"></span>
+                          </span>Check if calling number is same as contact number
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group" id="contact_number_parent">
+                      <label class="bmd-label-floating">Contact Number</label>
+                      <input type="text" class="form-control" name="contact_number" id="contact_number">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label>Address</label>
+                      <div class="form-group">
+                        <label class="bmd-label-floating">Complate address of the customer without city, state and pin code</label>
+                        <textarea class="form-control" rows="5" name="address"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">City</label>
+                      <input type="text" class="form-control" name="city">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">State</label>
+                      <input type="text" class="form-control" name="state">
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Postal Code</label>
+                      <input type="text" class="form-control" name="pin">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <!-- Modal End -->
+
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'assets/js/plugins/moment.min.js' %}"></script>
+<script src="{% static 'assets/js/plugins/bootstrap-datetimepicker.min.js' %}"></script>
+<script>
+  $(function () {
+    $('#timepicker').datetimepicker({
+                    // format: 'LT',
+                    format: 'HH:mm',
+                    stepping: 15
+                });
+    $('#datepicker').datetimepicker({
+                    format: 'L'
+                });
+  });
+
+// document.addEventListener('DOMContentLoaded', () => {
+//
+// });
+
+var ajax = new XMLHttpRequest();
+ajax.open("GET", "{% url 'customers:customer_list_api' %}", true);
+ajax.onload = function() {
+	var list = JSON.parse(ajax.responseText).map(function(i) { return i.fields.name; });
+	new Awesomplete(document.querySelector("#customer"),{ list: list });
+};
+ajax.send();
+
+var ajaxTwo = new XMLHttpRequest();
+ajaxTwo.open("GET", "{% url 'calls:call_complain_api' %}", true);
+ajaxTwo.onload = function() {
+	var complaints = JSON.parse(ajaxTwo.responseText).map(function(i) { return i.fields.complaint_nature; });
+  console.log(complaints);
+	new Awesomplete(document.querySelector("#complaints"),{ list: complaints });
+};
+ajaxTwo.send();
+
+$(document).on("click", "#copy_number", function () {
+  const pkid    = $(this).val;
+  const number  = document.getElementById('calling_number').value;
+  document.getElementById('contact_number').value = number;
+  document.getElementById('contact_number_parent').className += ' is-filled';
+});
+
+</script>
+{% endblock %}

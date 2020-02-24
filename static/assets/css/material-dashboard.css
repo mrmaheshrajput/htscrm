@@ -15151,7 +15151,7 @@ fieldset[disabled] .form-group.is-focused .togglebutton label {
   z-index: 2;
   width: 260px;
   background: #fff;
-  box-shadow: 0 16px 38px -12px rgba(0, 0, 0, 0.56), 0 4px 25px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 16px 38px -12px rgba(142, 142, 142, 0.56), 0 4px 25px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar .caret {
@@ -16973,7 +16973,7 @@ thead.thead-inverse th,
 body {
   background-color: #eee;
   color: #3C4858;
-  font-weight: 300;
+  font-weight: 500;
 }
 
 legend {

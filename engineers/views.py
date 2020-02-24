@@ -49,22 +49,6 @@ class EngineerDeleteView(LoginRequiredMixin, View):
 class EngineerEditView(LoginRequiredMixin, View):
     template_name           = 'engineers/engineer_edit.html'
 
-    # def get(self, request, id):
-    #     if id:
-    #         try:
-    #             instance    = Engineer.objects.get(pk=id)
-    #         except Engineer.DoesNotExist:
-    #             instance    = None
-    #         if instance:
-    #             form        = EngineerAddForm(initial=
-    #                                 {'engineer_name': instance.engineer_name,
-    #                                 'mobile'        : instance.mobile
-    #                                 }
-    #                             )
-    #             return render(request, self.template_name, {"form": form})
-    #     messages.add_message(request, messages.INFO, 'fail')
-    #     return redirect('engineers:engineer_view')
-
     def post(self, request):
         form                = EngineerAddForm(request.POST or None)
         if form.is_valid():
@@ -75,8 +59,10 @@ class EngineerEditView(LoginRequiredMixin, View):
                         edited_by       =self.request.user,
                         edit_datetime   =datetime.datetime.now()
                         )
-            print(r)
-            messages.add_message(request, messages.INFO, 'Success - Engineer edited successfully')
+            if not r:
+                messages.add_message(request, messages.INFO, 'Failed - Invalid something!', fail_silently=True)
+                return redirect('engineers:engineer_view')
+            messages.add_message(request, messages.INFO, 'Success - Engineer edited successfully', fail_silently=True)
             return redirect('engineers:engineer_view')
-        messages.add_message(request, messages.INFO, 'Failed - Invalid details!')
+        messages.add_message(request, messages.INFO, 'Failed - Invalid details!', fail_silently=True)
         return redirect('engineers:engineer_view')

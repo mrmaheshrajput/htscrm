@@ -1,9 +1,11 @@
 import datetime
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core import serializers
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import View
+from django.urls import reverse
 
 from customers.models import ClientDetails
 from customers.forms import ClientForm
@@ -34,14 +36,19 @@ class CustomerCreateView(LoginRequiredMixin, View):
 
     def post(self, request):
         form                = ClientForm(request.POST or None)
+        next                = request.POST['next']
+        if next == reverse('customers:customer_create_view'):
+            next            = None
+        if not next:
+            next            = reverse('customers:customer_detail_view')
         if form.is_valid():
             instance            = form.save(commit=False)
             instance.created_by = self.request.user
             instance.save()
             messages.add_message(request, messages.INFO, 'Success - Customer added successfully!')
-            return redirect('customers:customer_detail_view')
+            return redirect(next)
         messages.add_message(request, messages.INFO, 'Failed - Invalid details')
-        return render(request, self.template_name)
+        return redirect(next)
 
 
 class CustomerDetailView(LoginRequiredMixin, JSONResponseMixin, View):
@@ -72,6 +79,12 @@ class CustomerDetailView(LoginRequiredMixin, JSONResponseMixin, View):
             "object"        : queryset
         }
         return self.render_to_json_response(context)
+
+
+class CustomerListApi(LoginRequiredMixin, JSONResponseMixin, View):
+    def get(self, request):
+        data                = serializers.serialize('json', ClientDetails.objects.all(), fields=('name'))
+        return HttpResponse(data)
 
 
 class CustomerDeleteView(LoginRequiredMixin, View):
@@ -109,7 +122,7 @@ class CustomerEditView(LoginRequiredMixin, View):
     def post(self, request, id):
         form                = ClientForm(request.POST or None)
         if form.is_valid():
-            r = ClientDetails.objects.filter(pk=id).update(
+            ClientDetails.objects.filter(pk=id).update(
                         name                = request.POST['name'],
                         contact_number      = request.POST['contact_number'],
                         calling_number      = request.POST['calling_number'],
@@ -120,7 +133,6 @@ class CustomerEditView(LoginRequiredMixin, View):
                         edited_by           = self.request.user,
                         edit_datetime       = datetime.datetime.now()
                         )
-            print(r)
             messages.add_message(request, messages.INFO, 'Success - Customer edited successfully')
             return redirect('customers:customer_detail_view')
         messages.add_message(request, messages.INFO, 'Failed - Invalid details!')

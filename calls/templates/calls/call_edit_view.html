@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block title %}Edit Call{% endblock %}
+{% block body %}
+
+{% load static %}
+
+      {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+            {% if "Success" in message|safe %}
+              <input type="hidden" value="{{ message }}" id="success">
+            {% elif "Failed" in message|safe %}
+              <input type="hidden" id="error" value="{{ message }}">
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-right">
+            <a href="{% url 'calls:calls_list_view' %}" class="btn btn-primary btn-round"><span class="glyphicon glyphicon-menu-hamburger"></span> View All Calls</a>
+            <a href="{% url 'calls:call_register_view' %}" class="btn btn-primary btn-round"><span class="glyphicon glyphicon-plus-sign"></span> Add New Call</a>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header card-header-warning">
+              <h4 class="card-title">Edit Call Form</h4>
+              <p class="card-category">Click on submit to save the changes</p>
+            </div>
+            <div class="card-body">
+              <form method="post" autocomplete="off" action="{% url 'calls:call_register_view' %}">{% csrf_token %}
+                <div class="row">
+                  <div class="col-md-9">
+                    <div class="form-group awesomplete">
+                      <label class="bmd-label-floating">Select Customer</label>
+                      <input type="hidden" value="{{ object.pk }}" name="call-id">
+                      <input type="hidden" value="{{ request.path }}" name="next">
+                      <input type="text" class="form-control" name="customer" id="customer" value="{{ object.customer.name }}">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group awesomplete">
+                      <label class="bmd-label-floating">Complain Nature</label>
+                      <input type="text" class="form-control" name="complaint_nature" id="complaints" value="{{ object.complaint_nature }}">
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group" id="contact_number_parent">
+                      <label class="bmd-label-floating">Product Brand</label>
+                      <input type="text" class="form-control" name="brand" {% if object.brand %} value="{{ object.brand }}" {% endif %}>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Product Name</label>
+                      <input type="text" class="form-control" name="product_name" {% if object.product_name %} value="{{ object.product_name }}" {% endif %}>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Product Serial</label>
+                      <input type="text" class="form-control" name="product_serial" {% if object.product_serial %} value="{{ object.product_serial }}" {% endif %}>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Product Coverage</label>
+                      <input type="text" class="form-control" name="product_coverage" {% if object.product_coverage %} value="{{ object.product_coverage }}" {% endif %}>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Select appointment Date:</label>
+                        <div class="row" style="margin-left:0">
+                          {{ form.appointment_date }}
+                          <!-- <input type="date" class="form-control" name="appointment_date" value="{{ form.appointment_date.value }}"> -->
+                        </div>
+                      <!-- <input type="text" class="form-control" name="appointment_date" id="datepicker"> -->
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Appointment Time</label>
+                      <!-- <div class="row" style="margin-left:0">
+                        {{ form.appointment_time }}
+                      </div> -->
+                      <input type='text' class="form-control" name="appointment_time" id="timepicker" {% if object.appointment_time %} value="{{ object.appointment_time|safe }}" {% endif %}>
+                    </div>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-success pull-right">Save</button>
+                <div class="clearfix"></div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'assets/js/plugins/moment.min.js' %}"></script>
+<script src="{% static 'assets/js/plugins/bootstrap-datetimepicker.min.js' %}"></script>
+<script>
+  $(function () {
+    $('#timepicker').datetimepicker({
+                    // format: 'LT',
+                    format: 'HH:mm',
+                    stepping: 15
+                });
+    $('#datepicker').datetimepicker({
+                    format: 'L'
+                });
+  });
+
+
+  var ajax = new XMLHttpRequest();
+  ajax.open("GET", "{% url 'customers:customer_list_api' %}", true);
+  ajax.onload = function() {
+  	var list = JSON.parse(ajax.responseText).map(function(i) { return i.fields.name; });
+  	new Awesomplete(document.querySelector("#customer"),{ list: list });
+  };
+  ajax.send();
+
+
+var ajaxTwo = new XMLHttpRequest();
+ajaxTwo.open("GET", "{% url 'calls:call_complain_api' %}", true);
+ajaxTwo.onload = function() {
+	var complaints = JSON.parse(ajaxTwo.responseText).map(function(i) { return i.fields.complaint_nature; });
+	new Awesomplete(document.querySelector("#complaints"),{ list: complaints });
+};
+ajaxTwo.send();
+
+
+</script>
+{% endblock %}
