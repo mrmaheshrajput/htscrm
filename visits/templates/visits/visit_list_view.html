@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Calls{% endblock %}
+{% block title %}Call Visits{% endblock %}
 {% block body %}
 
 {% load static %}
@@ -22,112 +22,12 @@
             <a href="{% url 'calls:call_register_view' %}" class="btn btn-primary btn-round"><span class="glyphicon glyphicon-plus-sign"></span> Add New Call</a>
           </div>
         </div>
-        <div class="col-md-12">
-          <div class="card">
-            <div class="card-header card-header-primary">
-              <h4 class="card-title ">Open Calls</h4>
-              <p class="card-category">This table shows all the unclosed calls.</p>
-            </div>
-            <div class="card-body">
-              <div class="table-responsive">
-                <table class="table">
-                  <thead class=" text-primary">
-                    <th>
-                      Sr. No.
-                    </th>
-                    <th>
-                      Customer Name
-                    </th>
-                    <th>
-                      Complaint
-                    </th>
-                    <th>
-                      Call Allocation
-                    </th>
-                    <th>
-                      Visit Status
-                    </th>
-                    <th>
-                      Visit Outcome
-                    </th>
-                    <th>
-                      Action
-                    </th>
-                  </thead>
-                  <tbody>
-                    {% for item in objects %}
-                      {% if item.call_status.call_status_final|safe != "False" %}
-                    <tr>
-                      <td>{{ forloop.counter }}</td>
-                      <td>
-                        {{ item.customer.name }}
-                        <br>
-                        {% if item.edited_by %}
-                        <p class="text-muted">Edited by: {{ item.edited_by }}, on {{ item.edit_datetime }}</p>
-                        {% endif %}
-                      </td>
-                      <td>{{ item.complaint_nature }}</td>
-                      <td>
-                        {% if item.engineer_assigned %}
-                          {{ item.engineer_assigned.engineer_name }}
-                        {% else %}
-                          <a href="#" class="call-allocator" data-toggle="modal" data-target="#allocateCall" data-id="{{ item.pk }}">Allocate Now</a>
-                        {% endif %}
-                      </td>
-                      <td>
-                        {% if item.visit_status %}
-                        {{ item.visit_status }}
-                        {% else %}
-                        -
-                        {% endif %}
-                      </td>
-                      <td>
-                        {% if item.call_status.call_visit_final_notes %}
-                        {{ item.call_status.call_visit_final_notes }}
-                        {% else %}
-                        -
-                        {% endif %}
-                      </td>
-                      <td>
-                        <a class="nav-link" href="#" id="itemDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          <i class="material-icons">edit</i>
-                          <p class="d-lg-none d-md-block">
-                            View / Edit
-                          </p>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="itemDropdownMenuLink">
-                          <a
-                            class="customer-view dropdown-item" href="{% url 'calls:call_detail_view' item.pk %}">View</a>
-                            {% if item.engineer_assigned %}
-                            <a
-                              class="customer-view dropdown-item" href="{% url 'visits:visit_create_view' item.pk %}">Add Call Visit</a>
-                            {% endif %}
-                          <a
-                            class="customer-edit dropdown-item"
-                            href="{% url 'calls:call_edit_view' id=item.id %}">Edit</a>
-                          <a
-                            class="customer-delete dropdown-item"
-                            href="#"
-                            data-toggle="modal"
-                            data-target="#archiveCall"
-                            data-id="{{ item.id }}">Archive</a>
-                        </div>
-                      </td>
-                    </tr>
-                      {% endif %}
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
 
         <div class="col-md-12">
           <div class="card">
             <div class="card-header card-header-primary">
-              <h4 class="card-title ">Closed Calls</h4>
-              <p class="card-category">This table shows all the closed calls.</p>
+              <h4 class="card-title ">All Visits Added</h4>
+              <p class="card-category">List of all visits added in the past</p>
             </div>
             <div class="card-body">
               <div class="table-responsive">
@@ -140,42 +40,33 @@
                       Customer Name
                     </th>
                     <th>
-                      Complaint
+                      Allocated to
                     </th>
                     <th>
-                      Call Allocation
+                      Customer visit date
                     </th>
                     <th>
-                      Visit Status
-                    </th>
-                    <th>
-                      Closing Notes
+                      Visited on
                     </th>
                     <th>
                       Action
                     </th>
                   </thead>
                   <tbody>
-                    {% for item in objects %}
-                      {% if item.call_status.call_status_final|safe == "False" %}
+                    {% for item in object_list %}
                     <tr>
                       <td>{{ forloop.counter }}</td>
+                      <td>{{ item.callallocation_id.call.customer.name }}</td>
                       <td>
-                        {{ item.customer.name }}
+                        {{ item.serviced_by.engineer_name }}
                         <br>
-                        {% if item.edited_by %}
-                        <p class="text-muted">Edited by: {{ item.edited_by }}, on {{ item.edit_datetime }}</p>
-                        {% endif %}
-                      </td>
-                      <td>{{ item.complaint_nature }}</td>
-                      <td>
-                          {{ item.engineer_assigned.engineer_name }}
+                        <p class="text-muted">On: {{ item.callallocation_id.timestamp }}</p>
                       </td>
                       <td>
-                        {{ item.visit_status }}
+                        {{ item.callallocation_id.call.appointment_date }}<br>
+                        <p class="text-muted">{{ item.callallocation_id.call.appointment_date|timeuntil }}</p>
                       </td>
-                      <td>
-                        {{ item.call_status.call_visit_final_notes }}
+                      <td>{{ item.visit_date_time|date }}
                       </td>
                       <td>
                         <a class="nav-link" href="#" id="itemDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -186,10 +77,7 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="itemDropdownMenuLink">
                           <a
-                            class="customer-view dropdown-item" href="{% url 'calls:call_detail_view' item.pk %}">View</a>
-                          <a
-                            class="customer-edit dropdown-item"
-                            href="{% url 'calls:call_edit_view' id=item.id %}">Edit</a>
+                            class="customer-view dropdown-item" href="{% url 'visits:visit_detail_view' item.pk %}">View</a>
                           <a
                             class="customer-delete dropdown-item"
                             href="#"
@@ -199,7 +87,6 @@
                         </div>
                       </td>
                     </tr>
-                      {% endif %}
                     {% endfor %}
                   </tbody>
                 </table>

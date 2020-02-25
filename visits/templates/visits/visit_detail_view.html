@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Visit Detail{% endblock %}
+{% block body %}
+
+{% load static %}
+
+      {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+            {% if "Success" in message|safe %}
+              <input type="hidden" value="{{ message }}" id="success">
+            {% elif "Failed" in message|safe %}
+              <input type="hidden" id="error" value="{{ message }}">
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-right">
+            <a href="{% url 'calls:calls_list_view' %}" class="btn btn-primary btn-round"><span class="glyphicon glyphicon-menu-hamburger"></span> Go to Calls</a>
+            <a href="{% url 'visits:visit_list_view' %}" class="btn btn-primary btn-round"><span class="glyphicon glyphicon-menu-hamburger"></span> View all visits</a>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-body">
+              <h2>Visit Details</h2>
+              <ul>
+                <li>Engineer assigned: {{ object.callallocation_id.engineer_assigned.engineer_name }}</li>
+                <li>Engineer visited: {{ object.serviced_by.engineer_name }}</li>
+                <li>Visit Status: {{ object.get_visit_status_display }}</li>
+                <li>Date time: {{ object.visit_date_time }}</li>
+                <li>Outcome: {{ object.outcome }}</li>
+                <li>Call status: {{ object.call_status_final }}</li>
+                <li>Call status reason: {{ object.call_visit_final_notes }}</li>
+                <li>Visit added by: {{ object.added_by }}, on {{ object.timestamp}}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body">
+              <h2>Customer Details</h2>
+              <ul>
+                <li>{{ object.callallocation_id.call.customer.name }}</li>
+                <li>{{ object.callallocation_id.call.customer.address }}</li>
+                <li>{{ object.callallocation_id.call.customer.contact_number }}</li>
+                <li>{{ object.callallocation_id.call.customer.calling_number }}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+{% endblock %}

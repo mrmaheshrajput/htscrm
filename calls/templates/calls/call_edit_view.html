@@ -30,7 +30,7 @@
               <p class="card-category">Click on submit to save the changes</p>
             </div>
             <div class="card-body">
-              <form method="post" autocomplete="off" action="{% url 'calls:call_register_view' %}">{% csrf_token %}
+              <form method="post" autocomplete="off" action="{% url 'calls:call_edit_view' object.id %}">{% csrf_token %}
                 <div class="row">
                   <div class="col-md-9">
                     <div class="form-group awesomplete">
@@ -96,7 +96,7 @@
                     </div>
                   </div>
                 </div>
-                <button type="button" class="btn btn-success pull-right">Save</button>
+                <button type="submit" class="btn btn-success pull-right">Save</button>
                 <div class="clearfix"></div>
               </form>
             </div>

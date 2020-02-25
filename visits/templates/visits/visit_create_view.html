@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block title %}Add Call Visit{% endblock %}
+{% block body %}
+
+{% load static %}
+
+      {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+            {% if "Success" in message|safe %}
+              <input type="hidden" value="{{ message }}" id="success">
+            {% elif "Failed" in message|safe %}
+              <input type="hidden" id="error" value="{{ message }}">
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-right">
+            <a href="{% url 'customers:customer_detail_view' %}" class="btn btn-primary btn-round">View All Customers</a>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <div class="card">
+            <div class="card-header card-header-primary">
+              <h4 class="card-title">Add Call Visit</h4>
+              <p class="card-category">Please verify customer details from right side, call visit once entered
+              cannot be modified. You can enter multiple call visits for single allocated call
+            till it has been marked closed.</p>
+            </div>
+            <div class="card-body">
+              <form method="post" action="{% url 'visits:visit_create_view' object.id %}">{% csrf_token %}
+                <div class="row">
+                  <div class="col-md-4">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Serviced by</label>
+                      {{ form.serviced_by }}
+                      <!-- <input type="hidden" name="callallocation_id" value="{{ object.id }}"> -->
+                      <!-- <input type="text" class="form-control" name="name" value="{{ object.engineer_assigned.engineer_name }}"> -->
+                    </div>
+                  </div>
+                  <div class="col-md-8">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Serviced on</label>
+                        <div class="row" style="margin-left:0">
+                          {{ form.visit_date_time }}
+                        </div>
+                      <!-- <input type="text" class="form-control" name="calling_number" value="{{ object.call.appointment_date }} {{ object.call.appointment_time|safe }}"> -->
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Service status : (Select from dropdown)</label>
+                      <div class="form-group">
+                        {{ form.visit_status }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label>Outcome</label>
+                      <div class="form-group">
+                        <label class="bmd-label-floating">Complate service outcome including what problems incurred and what services provided</label>
+                        <textarea class="form-control" rows="5" name="outcome"></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group" id="contact_number_parent">
+                      <label>Call status:</label>
+                      <div class="form-group is-focused">
+                        <label class="bmd-label-floating">(click on applicable status)</label>
+                        <input type="text" class="form-control" id="call_status" name="call_status" readonly>
+                        <button type="button" class="btn btn-primary" id="call-status-open" data-id="Open"><span class="glyphicon glyphicon-record"></span> OPEN</button>
+                        <button type="button" class="btn btn-secondary" id="call-status-closed" data-id="Closed"><span class="glyphicon glyphicon-saved"></span> CLOSED</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="form-group">
+                      <label class="bmd-label-floating">Reason for call open/closure</label>
+                      <input type="text" class="form-control" name="call_visit_final_notes">
+                    </div>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary pull-right">Save</button>
+                <div class="clearfix"></div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body">
+              <h2>Call Details</h2>
+              <ul>
+                <li>Customer name: {{ object.call.customer.name }}</li>
+                <li>Address: {{ object.call.customer.address }}</li>
+                <li>Call registered on: {{ object.call.timestamp }}</li>
+                <li>Engineer assigned: {{ object.engineer_assigned.engineer_name }}</li>
+                <li>Allocated on: {{ object.timestamp }}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+{% endblock %}
+
+{% block script %}
+
+<script src="{% static 'assets/js/plugins/moment.min.js' %}"></script>
+<script src="{% static 'assets/js/plugins/bootstrap-datetimepicker.min.js' %}"></script>
+<script>
+    // $(function () {
+    //   $('#datetimepicker').datetimepicker({
+    //                   // format: 'LT',
+    //                   // format: 'HH:mm',
+    //                   default: '{{ object.call.appointment_date|safe }} {{ object.call.appointment_time|safe }}',
+    //                   stepping: 15
+    //               });
+    // });
+    $(function () {
+                $('#datetimepicker').datetimepicker();
+            });
+
+    $(document).on("click", "#call-status-open", function () {
+      const pkid    = $(this).data('id');
+      $("#call_status").val(pkid);
+    });
+
+    $(document).on("click", "#call-status-closed", function () {
+      const pkid    = $(this).data('id');
+      $("#call_status").val(pkid);
+    });
+
+
+  // $(document).on("click", "#copy_number", function () {
+  //   const pkid    = $(this).val;
+  //   const number  = document.getElementById('calling_number').value;
+  //   document.getElementById('contact_number').value = number;
+  //   document.getElementById('contact_number_parent').className += ' is-focused';
+  // });
+</script>
+{% endblock %}

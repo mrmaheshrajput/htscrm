@@ -30,6 +30,7 @@ ALLOWED_HOSTS = [
     'localhost',
     'nameofapp.herokuapp.com',
     'hitech-crm.herokuapp.com',
+    'testserver',
     ]
 
 
@@ -94,15 +95,12 @@ DATABASES = {
         'HOST': 'ec2-54-247-70-127.eu-west-1.compute.amazonaws.com',
         'PORT': '5432',
         'TEST': {
-            'NAME': 'd4ehltokp1f471',
-            'ENGINE': 'django.db.backends.postgresql',
-            'USER': 'iyjudzjvxdtdyk',
-            'PASSWORD': '9093094ceef2602664b30fa6d275610456b76922139105ac19761f76ecde85b5',
-            'HOST': 'ec2-54-246-90-10.eu-west-1.compute.amazonaws.com',
-            'PORT': '5432',
-        }
-      #'export DATABASE_URL="postgres://sauysazixsnkbf:c4cc5e3bfe2d96890d139f2f21c09b92cf3f78c1eb22851413aa0622c5c9198f@ec2-54-247-70-127.eu-west-1.compute.amazonaws.com:5432/d4um7j7retuu86"'
+            'NAME': 'dfldmm4uk422f5',
+        },
     }
+    #   #'export DATABASE_URL="postgres://sauysazixsnkbf:c4cc5e3bfe2d96890d139f2f21c09b92cf3f78c1eb22851413aa0622c5c9198f@ec2-54-247-70-127.eu-west-1.compute.amazonaws.com:5432/d4um7j7retuu86"'
+    #   #export DATABASE_URL="postgres://unwpmxkrkyqpax:11b778dfaadccad4feb011ae3cc1a7a2bba15174144d316ef08833d0b42eb9bc@ec2-46-137-177-160.eu-west-1.compute.amazonaws.com:5432/dfldmm4uk422f5"
+    # }
     # 'default': {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
@@ -112,21 +110,8 @@ DATABASES = {
 # Heroku PostgreSQL Database
 import dj_database_url
 #
-# db_from_env = dj_database_url.config(conn_max_age=600)
-# DATABASES['default'].update(db_from_env)
-
-TEST_DATABASES = {
-    # 'default': {
-    #     'NAME': 'd4ehltokp1f471',
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'USER': 'iyjudzjvxdtdyk',
-    #     'PASSWORD': '9093094ceef2602664b30fa6d275610456b76922139105ac19761f76ecde85b5',
-    #     'HOST': 'ec2-54-246-90-10.eu-west-1.compute.amazonaws.com',
-    #     'PORT': '5432',
-    #     # export TEST_DATABASE_URL="postgres://iyjudzjvxdtdyk:9093094ceef2602664b30fa6d275610456b76922139105ac19761f76ecde85b5@ec2-54-246-90-10.eu-west-1.compute.amazonaws.com:5432/d4ehltokp1f471"
-    # }
-    'default': dj_database_url.config(env='TEST_DATABASE_URL')
-}
+db_from_env = dj_database_url.config(conn_max_age=600)
+DATABASES['default'].update(db_from_env)
 
 
 # Password validation

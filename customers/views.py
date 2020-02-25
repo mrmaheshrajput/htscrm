@@ -55,7 +55,7 @@ class CustomerDetailView(LoginRequiredMixin, JSONResponseMixin, View):
     template_name           = 'customers/customer_detail_view.html'
 
     def get(self, request):
-        queryset            = ClientDetails.objects.all()
+        queryset            = ClientDetails.objects.all().order_by('-timestamp')
         context             = {
             "objects"       : queryset
         }
@@ -83,7 +83,7 @@ class CustomerDetailView(LoginRequiredMixin, JSONResponseMixin, View):
 
 class CustomerListApi(LoginRequiredMixin, JSONResponseMixin, View):
     def get(self, request):
-        data                = serializers.serialize('json', ClientDetails.objects.all(), fields=('name'))
+        data                = serializers.serialize('json', ClientDetails.objects.all().distinct('name'), fields=('name'))
         return HttpResponse(data)
 
 

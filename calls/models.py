@@ -33,17 +33,17 @@ class CallRegister(models.Model):
     edit_datetime           = models.DateTimeField(null=True,blank=True)
 
     def __str__(self):
-        return ('%s') % self.customer
+        return ('%s - %s') % (self.pk, self.customer)
 
 
 class CallAllocation(models.Model):
     # Choices
     PENDING    = 'P'
-    ASSIGNED   = 'A'
+    COMPLETED   = 'C'
     EXPIRED    = 'E'
     CALL_ALLOCATION_CHOICES = [
         (PENDING, 'Pending'),
-        (ASSIGNED, 'Assigned'),
+        (COMPLETED, 'Completed'),
         (EXPIRED, 'Expired')
     ]
 
@@ -57,4 +57,4 @@ class CallAllocation(models.Model):
     edit_datetime           = models.DateTimeField(null=True,blank=True)
 
     def __str__(self):
-        return ('%s - %s') % (self.call, self.status)
+        return ('(%s) %s - %s') % (self.pk ,self.call, self.status)

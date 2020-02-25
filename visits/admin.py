@@ -1,3 +1,4 @@
 from django.contrib import admin
+from visits.models import CallVisit
 
-# Register your models here.
+admin.site.register(CallVisit)

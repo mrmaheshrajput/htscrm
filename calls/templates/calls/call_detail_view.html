@@ -31,20 +31,46 @@
           <div class="card">
             <div class="card-body">
               <h2>Call Details</h2>
-              <ul>
-                <li>{{ object.customer.name }}</li>
-                <li>{{ object.complaint_nature }}</li>
-                <li>{{ object.brand }}</li>
-                <li>{{ object.product_name }}</li>
-                <li>{{ object.product_serial }}</li>
-                <li>{{ object.product_coverage }}</li>
-                <li>{{ object.appointment_date }}</li>
-                <li>{{ object.appointment_time }}</li>
-                <li>{{ object.added_by }}</li>
-                <li>{{ object.timestamp }}</li>
-                <li>{{ object.edited_by }}</li>
-                <li>{{ object.edit_datetime }}</li>
-              </ul>
+              <p class="pull-right text-muted">Registered by {{ object.added_by }} on {{ object.timestamp }}</p>
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td>Customer name :</td>
+                    <td>{{ object.customer.name }}</td>
+                  </tr>
+                  <tr>
+                    <td>Complain nature :</td>
+                    <td>{{ object.complaint_nature }}</td>
+                  </tr>
+                  <tr>
+                    <td>Product brand :</td>
+                    <td>{{ object.brand }}</td>
+                  </tr>
+                  <tr>
+                    <td>Product name :</td>
+                    <td>{{ object.product_name }}</td>
+                  </tr>
+                  <tr>
+                    <td>Product serial:</td>
+                    <td>{{ object.product_serial }}</td>
+                  </tr>
+                  <tr>
+                    <td>In Warranty :</td>
+                    <td>{{ object.product_coverage }}</td>
+                  </tr>
+                  <tr>
+                    <td>Customer preferred appointment data :</td>
+                    <td>{{ object.appointment_date }}</td>
+                  </tr>
+                  <tr>
+                    <td>Customer preferred appointment time :</td>
+                    <td>{{ object.appointment_time }}</td>
+                  </tr>
+                </tbody>
+              </table>
+              {% if object.edited_by %}
+              <p class="pull-right text-warning">Edited by: {{ object.edited_by }} on {{ object.edit_datetime }}</p>
+              {% endif %}
             </div>
           </div>
         </div>
@@ -52,23 +78,73 @@
           <div class="card">
             <div class="card-body">
               <h2>Customer Details</h2>
-              <ul>
-                <li>{{ object.customer.name }}</li>
-                <li>{{ object.customer.address }}</li>
-                <li>{{ object.customer.contact_number }}</li>
-                <li>{{ object.customer.calling_number }}</li>
-              </ul>
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td>Name : {{ object.customer.name }}</td>
+                  </tr>
+                  <tr>
+                    <td>Address: {{ object.customer.address }}, {{ object.customer.city }},
+                    {{ object.customer.state }} - {{ object.customer.pin }}</td>
+                  </tr>
+                  <tr>
+                    <td>Contact no.: {{ object.customer.contact_number }}</td>
+                  </tr>
+                  <tr>
+                    <td>Calling no.: {{ object.customer.calling_number }}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
+        {% if call_visits %}
         <div class="col-md-8">
+          <div class="card">
+            <div class="card-body">
+              <h2>Customer Visit History</h2>
+              {% for item in call_visits %}
+              <br><br>
+              <h3 class="pull-right">Call:
+                {% if item.call_status_final|safe != "False" %}
+                  <span class="text-danger">Open</span>
+                {% else %}
+                  <span class="text-success">Closed</span>
+                {% endif%}
+              </h3>
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td>Date : {{ item.visit_date_time|date }}</td>
+                  </tr>
+                  <tr>
+                    <td>Engineer: {{ item.serviced_by.engineer_name }}</td>
+                  </tr>
+                  <tr>
+                    <td>Visit status: {{ item.get_visit_status_display }}</td>
+                  </tr>
+                  <tr>
+                    <td>Service outcome: {{ item.outcome }}</td>
+                  </tr>
+                  <tr>
+                    <td>Reason for call open/closure: {{ item.call_visit_final_notes }}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="pull-right text-muted">Added by {{ item.added_by }} on {{ item.timestamp }}</p>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        {% endif %}
+        <div class="col-md-4">
           <div class="card">
             <div class="card-body">
               <h2>Call allocated to:</h2>
               {% if call_allocations %}
                 <ul>
                 {% for item in call_allocations %}
-                  <li>{{ item.engineer_assigned.engineer_name }} - {{ item.get_status_display }}
+                  <li>{{ item.engineer_assigned.engineer_name }} - Visit status : {{ item.get_status_display }}
                     <br>
                     <p class="text-muted">By {{ item.added_by.first_name }}, on {{ item.timestamp }}
                   </li>

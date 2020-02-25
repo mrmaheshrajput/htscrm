@@ -60,7 +60,7 @@ class EngineerEditView(LoginRequiredMixin, View):
                         edit_datetime   =datetime.datetime.now()
                         )
             if not r:
-                messages.add_message(request, messages.INFO, 'Failed - Invalid something!', fail_silently=True)
+                messages.add_message(request, messages.INFO, 'Failed - Invalid details!', fail_silently=True)
                 return redirect('engineers:engineer_view')
             messages.add_message(request, messages.INFO, 'Success - Engineer edited successfully', fail_silently=True)
             return redirect('engineers:engineer_view')
