@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Engineer Detail{% endblock %}
+{% block body %}
+
+{% load static %}
+
+      {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+            {% if "Success" in message|safe %}
+              <input type="hidden" value="{{ message }}" id="success">
+            {% elif "Failed" in message|safe %}
+              <input type="hidden" id="error" value="{{ message }}">
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <div class="row">
+        <div class="col-md-12">
+          <div class="text-right">
+            <a href="{% url 'engineers:engineer_view' %}" class="btn btn-primary btn-round"><span class="glyphicon glyphicon-menu-hamburger"></span> View all engineers</a>
+          </div>
+        </div>
+        <div class="col-md-8">
+          <h2>Call History</h2>
+          {% for item in objects %}
+          <div class="card">
+            <div class="card-body">
+              <p>Date allocated: {{ item.timestamp }}</p>
+              <p class="pull-right">Call Visit: {{ item.get_status_display }}</p>
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td>Customer :</td>
+                    <td>{{ item.call.customer }}</td>
+                  </tr>
+                  {% for object in item.call_allocation_id.all %}
+                  <tr>
+                    <td>Visit status :</td>
+                    <td>{{ object.get_visit_status_display }}</td>
+                  </tr>
+                  <tr>
+                    <td>Visit date :</td>
+                    <td>
+                      {{ object.visit_date_time|date }}<br>
+                      {{ object.visit_date_time|timesince }} ago
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Visit outcome :</td>
+                    <td>{{ object.outcome }}</td>
+                  </tr>
+                  <tr>
+                    <td>Call status :</td>
+                    <td>
+                      {{ object.call_status_final }}<br>
+                      <strong>Reason: </strong>{{ object.call_visit_final_notes }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Call added by :</td>
+                    <td>
+                      {{ object.added_by }}<br>
+                      On {{ object.timestamp }}
+                    </td>
+                  </tr>
+                  {% if object.serviced_by.engineer_name|safe != item.engineer_assigned.engineer_name|safe %}
+                  <tr>
+                    <td>Visit outcome :</td>
+                    <td>{{ object.outcome }}</td>
+                  </tr>
+                  {% endif %}
+                  {% empty %}
+                  <tr>
+                    <td colspan="2" class="text-center text-muted">Call {{ item.get_status_display }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          {% empty %}
+          <p class="text-center">No calls found</p>
+          {% endfor %}
+        </div>
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body">
+              <h2>Overview</h2>
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td>Total call{{ objects.count|pluralize }} allocated :</td>
+                    <td>{{ objects.count }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+{% endblock %}

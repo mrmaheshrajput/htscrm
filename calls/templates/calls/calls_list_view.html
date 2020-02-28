@@ -66,12 +66,12 @@
                         <p class="text-muted">Edited by: {{ item.edited_by }}, on {{ item.edit_datetime }}</p>
                         {% endif %}
                       </td>
-                      <td>{{ item.complaint_nature }}</td>
+                      <td>{{ item.complaint_nature|truncatechars:12 }}</td>
                       <td>
                         {% if item.engineer_assigned %}
                           {{ item.engineer_assigned.engineer_name }}
                         {% else %}
-                          <a href="#" class="call-allocator" data-toggle="modal" data-target="#allocateCall" data-id="{{ item.pk }}">Allocate Now</a>
+                          <a href="#" class="call-allocator text-success" data-toggle="modal" data-target="#allocateCall" data-id="{{ item.pk }}">Allocate Now</a>
                         {% endif %}
                       </td>
                       <td>
@@ -83,7 +83,7 @@
                       </td>
                       <td>
                         {% if item.call_status.call_visit_final_notes %}
-                        {{ item.call_status.call_visit_final_notes }}
+                        {{ item.call_status.call_visit_final_notes|truncatechars:15 }}
                         {% else %}
                         -
                         {% endif %}

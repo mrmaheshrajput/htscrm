@@ -121,7 +121,7 @@ class CallDetailView(LoginRequiredMixin, View):
         queryset                    = get_object_or_404(CallRegister, pk=id)
         call_allocations            = CallAllocation.objects.filter(call=queryset).order_by('-timestamp')
         if call_allocations:
-            call_visits                 = CallVisit.objects.filter(call_id=call_allocations[0].call.pk)
+            call_visits             = CallVisit.objects.filter(call_id=call_allocations[0].call.pk).order_by('-timestamp')
         else:
             call_visits             = None
         engineers                   = Engineer.objects.all()

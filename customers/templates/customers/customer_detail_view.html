@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Customers Master{% endblock %}
+{% block title %}Customer Details{% endblock %}
 {% block body %}
 
 {% load static %}
@@ -19,222 +19,117 @@
       <div class="row">
         <div class="col-md-12">
           <div class="text-right">
-            <a href="{% url 'customers:customer_create_view' %}" class="btn btn-primary btn-round">+ Add New</a>
+            <a href="{% url 'customers:customer_list_view' %}" class="btn btn-primary btn-round"><span class="glyphicon glyphicon-menu-hamburger"></span> View all customer</a>
           </div>
         </div>
-        <div class="col-md-12">
+        <div class="col-md-8">
+          <h2>Call History</h2>
+          {% for item in objects %}
           <div class="card">
-            <div class="card-header card-header-primary">
-              <h4 class="card-title ">View Customers</h4>
-              <p class="card-category">This table shows all the saved customers. Click on edit icon to modify the saved details.</p>
-            </div>
             <div class="card-body">
-              <div class="table-responsive">
-                <table class="table">
-                  <thead class=" text-primary">
-                    <th>
-                      Sr. No.
-                    </th>
-                    <th>
-                      Customer Name
-                    </th>
-                    <th>
-                      Contact Number
-                    </th>
-                    <th>
-                      Pending Calls
-                    </th>
-                    <th>
-                      Pending Visit
-                    </th>
-                    <th>
-                      Action
-                    </th>
-                  </thead>
-                  <tbody>
-                    {% for item in objects %}
-                    <tr>
-                      <td>{{ forloop.counter }}</td>
-                      <td>
-                        {{ item.name }}<br>
-                        {% if item.edited_by %}
-                        <p class="text-muted">Edited by: {{ item.edited_by }}, on {{ item.edit_datetime }}</p>
-                        {% endif %}
-                      </td>
-                      <td>{{ item.contact_number }}</td>
-                      <td>-</td>
-                      <td>-</td>
-                      <td>
-                        <a class="nav-link" href="#" id="itemDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          <i class="material-icons">edit</i>
-                          <p class="d-lg-none d-md-block">
-                            View / Edit
-                          </p>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="itemDropdownMenuLink">
-                          <a
-                            class="customer-view dropdown-item"
-                            href="#" data-toggle="modal"
-                            data-target="#viewCustomer"
-                            data-id="{{ item.id }}"
-                            onclick="getCustomer({{ item.id }})">View</a>
-                          <a
-                            class="customer-edit dropdown-item"
-                            href="{% url 'customers:customer_edit_view' id=item.id %}"
-                            data-id="{{ item.id }}">Edit</a>
-                          <a
-                            class="customer-delete dropdown-item"
-                            href="#"
-                            data-toggle="modal"
-                            data-target="#confirmCustomerDelete"
-                            data-id="{{ item.id }}">Delete</a>
-                        </div>
-                      </td>
-                    </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
+              <p>
+                Call registered on: {{ item.timestamp }}<br>
+                By: {{ item.added_by }}
+              </p>
+              <div class="text-center">
+                <p>
+                  Call status:
+                  {% for object in item.mother_call_id.all %}
+                    {% if object.call_status_final|safe != "False" %}
+                    <span class="text-danger">Open</span>
+                    <br>
+                    {% else %}
+                    <span class="text-success">Closed</span>
+                    <br>
+                    {% endif %}
+                    Reason: {{ object.call_visit_final_notes }}
+                  {% empty %}
+                    <span class="text-warning">Visit Pending</span>
+                  {% endfor %}
+                </p>
+                {% if item.edited_by %}
+                  <p class="text-muted">Call edited by {{ item.edited_by }} on {{ item.edit_datetime }}</p>
+                {% endif %}
+                <p>
+                  {% for object in item.mother_call_id.all %}
+                    Visited on: {{ object.visit_date_time|date }}<br>
+                    Visit status: {{ object.get_visit_status_display }}<br>
+                    Outcome: {{ object.outcome }}<br>
+                    Visit added on: {{ object.timestamp }}
+                  {% endfor %}
+                </p>
               </div>
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td>Complaint nature :</td>
+                    <td>{{ item.complaint_nature }}</td>
+                  </tr>
+                  <tr>
+                    <td>Product brand :</td>
+                    <td>{{ item.brand }}</td>
+                  </tr>
+                  <tr>
+                    <td>Product name :</td>
+                    <td>
+                      {{ item.product_name }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Product serial :</td>
+                    <td>{{ item.product_serial }}</td>
+                  </tr>
+                  <tr>
+                    <td>Product coverage :</td>
+                    <td>{{ item.coverage }}</td>
+                  </tr>
+                  <tr>
+                    <td>Appointment date :</td>
+                    <td>{{ item.appointment_date }}</td>
+                  </tr>
+                  <tr>
+                    <td>Appointment time :</td>
+                    <td>{{ item.appointment_time }}</td>
+                  </tr>
+                  <tr>
+                    <td>Call added by :</td>
+                    <td>
+                      {{ item.added_by }}<br>
+                      On {{ item.timestamp }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          {% empty %}
+          <p class="text-center">No calls found</p>
+          {% endfor %}
+        </div>
+        <div class="col-md-4">
+          <div class="card">
+            <div class="card-body">
+              <h2>Customer Details</h2>
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td>Name : {{ customer.name }}</td>
+                  </tr>
+                  <tr>
+                    <td>Address: {{ customer.address }}, {{ customer.city }},
+                    {{ customer.state }} - {{ customer.pin }}</td>
+                  </tr>
+                  <tr>
+                    <td>Contact no.: {{ customer.contact_number }}</td>
+                  </tr>
+                  <tr>
+                    <td>Calling no.: {{ customer.calling_number }}</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
-
-        <!-- Customer View Modal -->
-        <div class="modal fade" id="viewCustomer" tabindex="-1" role="dialog" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalCenterTitle">Customer Details</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <table class="table view-customer">
-                  <input type="hidden" id="customer-id">
-                  <tr>
-                    <td>Name:</td>
-                    <td id="name">Loading...</td>
-                  </tr>
-                  <tr>
-                    <td>Contact Number:</td>
-                    <td id="contact_number">Loading...</td>
-                  </tr>
-                  <tr>
-                    <td>Calling Number:</td>
-                    <td id="calling_number">Loading...</td>
-                  </tr>
-                  <tr>
-                    <td>Address:</td>
-                    <td id="address">Loading...</td>
-                  </tr>
-                  <tr>
-                    <td>City:</td>
-                    <td id="city">Loading...</td>
-                  </tr>
-                  <tr>
-                    <td>State:</td>
-                    <td id="state">Loading...</td>
-                  </tr>
-                  <tr>
-                    <td>Pin:</td>
-                    <td id="pin">Loading...</td>
-                  </tr>
-                </table>
-                  <button type="button" class="btn btn-primary btn-round">Edit</button>
-              </div>
-              <!-- <div class="modal-footer">
-                <button type="submit" class="btn btn-secondary">Edit</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-              </div> -->
-            </div>
-          </div>
-        </div>
-        <!-- Modal End -->
-
-        <!-- Customer Delete Modal -->
-        <div class="modal fade" id="confirmCustomerDelete" tabindex="-1" role="dialog" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalCenterTitle">Are you sure?</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <form method="post" action="{% url 'customers:customer_delete_view' %}">{% csrf_token %}
-                <div class="modal-body for-delete">
-                  Deletion is permanent and deleted items cannot be recovered. Please make necessary backups before deletion.
-                  <input type="hidden" id="customer-id" name="customer-id">
-                </div>
-                <div class="modal-footer">
-                  <button type="submit" class="btn btn-secondary">Yes</button>
-                  <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-        <!-- Modal End -->
 
       </div>
-{% endblock %}
-
-{% block script %}
-<script type="text/javascript">
-  $(document).on("click", ".customer-delete", function () {
-    const pkid    = $(this).data('id');
-    $(".for-delete #customer-id").val(pkid);
-  });
-
-  function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-  };
-
-  function getCustomer(id) {
-    if (!id) {
-      return false;
-    }
-    var csrftoken  = getCookie('csrftoken');
-
-    const request = new XMLHttpRequest();
-    console.log(request);
-    request.open('POST', '{% url 'customers:customer_detail_view' %}');
-
-    request.onload = () => {
-      console.log(request.response);
-
-      const data = JSON.parse(request.response);
-
-      console.log(data.object)
-      document.getElementById('name').innerHTML = data.object.name;
-      document.getElementById('contact_number').innerHTML = data.object.contact_number;
-      document.getElementById('calling_number').innerHTML = data.object.calling_number;
-      document.getElementById('address').innerHTML = data.object.address;
-      document.getElementById('city').innerHTML = data.object.city;
-      document.getElementById('state').innerHTML = data.object.state;
-      document.getElementById('pin').innerHTML = data.object.pin;
-    };
-
-    const data = new FormData();
-    data.append('id', id);
-    data.append('csrfmiddlewaretoken', csrftoken);
-
-    request.send(data);
-    return false;
-  };
-
-</script>
 {% endblock %}

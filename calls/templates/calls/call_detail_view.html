@@ -55,7 +55,7 @@
                     <td>{{ object.product_serial }}</td>
                   </tr>
                   <tr>
-                    <td>In Warranty :</td>
+                    <td>Product coverage :</td>
                     <td>{{ object.product_coverage }}</td>
                   </tr>
                   <tr>
@@ -115,10 +115,10 @@
               <table class="table">
                 <tbody>
                   <tr>
-                    <td>Date : {{ item.visit_date_time|date }}</td>
+                    <td>Visit date : {{ item.visit_date_time|date }}</td>
                   </tr>
                   <tr>
-                    <td>Engineer: {{ item.serviced_by.engineer_name }}</td>
+                    <td>Engineer visited: {{ item.serviced_by.engineer_name }}</td>
                   </tr>
                   <tr>
                     <td>Visit status: {{ item.get_visit_status_display }}</td>
@@ -132,6 +132,7 @@
                 </tbody>
               </table>
               <p class="pull-right text-muted">Added by {{ item.added_by }} on {{ item.timestamp }}</p>
+              <br><hr>
               {% endfor %}
             </div>
           </div>
@@ -191,26 +192,4 @@
         <!-- Modal End -->
 
       </div>
-{% endblock %}
-
-{% block script %}
-<script type="text/javascript">
-
-  function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-  };
-
-</script>
 {% endblock %}

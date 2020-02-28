@@ -21,7 +21,7 @@
       <div class="row">
         <div class="col-md-12">
           <div class="text-right">
-            <button onclick="showEngineerForm()" class="btn btn-primary btn-round">+ Add New</button>
+            <button onclick="showEngineerForm()" class="btn btn-primary btn-round"><span class="glyphicon glyphicon-plus-sign"></span> Add New Engineer</button>
           </div>
         </div>
         <div class="col-md-8" id="add-engineer-form">
@@ -68,13 +68,10 @@
                       Name
                     </th>
                     <th>
-                      Contact Number
+                      Contact number
                     </th>
                     <th>
-                      Total Visits (Monthly)
-                    </th>
-                    <th>
-                      Pending Visits (Total)
+                      Pending visits to
                     </th>
                     <th></th>
                   </thead>
@@ -89,9 +86,21 @@
                         {% endif %}
                       </td>
                       <td>{{ item.mobile }}</td>
-                      <td>0</td>
-                      <td>0</td>
+                      <td>
+                        {% for object in item.assigned_engineer.all %}
+                          {% if object.status|safe == "P" %}
+                            {{ object.call.customer.name }} ;
+                          {% endif %}
+                        {% endfor %}
+                      </td>
                       <td class="td-actions text-right">
+                        <a
+                          rel="tooltip"
+                          title="View"
+                          class="btn btn-primary btn-link btn-sm engineer-edit"
+                          href="{% url 'engineers:engineer_detail_view' item.pk %}">
+                            <i class="material-icons">visibility</i>
+                        </a>
                         <button
                           type="button"
                           rel="tooltip"
@@ -115,29 +124,6 @@
                             <i class="material-icons">close</i>
                         </button>
                       </td>
-                      <!-- <td>
-                        <a class="nav-link" href="#" id="itemDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          <i class="material-icons">edit</i>
-                          <p class="d-lg-none d-md-block">
-                            Edit / Delete
-                          </p>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="itemDropdownMenuLink">
-                          <a
-                            class="engineer-edit dropdown-item"
-                            href="#" data-toggle="modal"
-                            data-target="#engineerEditModal"
-                            data-id="{{ item.id }}"
-                            data-name="{{ item.engineer_name}}"
-                            data-mobile="{{ item.mobile }}">Edit</a>
-                          <a
-                            class="engineer-delete dropdown-item"
-                            href="#"
-                            data-toggle="modal"
-                            data-target="#confirmEngineerDelete"
-                            data-id="{{ item.id }}">Delete</a>
-                        </div>
-                      </td> -->
                     </tr>
                     {% endfor %}
                   </tbody>

@@ -2,19 +2,19 @@ import datetime
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core import serializers
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import View, ListView
 from django.urls import reverse
 
-from calls.models import CallAllocation
+from calls.models import CallRegister, CallAllocation
 from visits.models import CallVisit
 from visits.forms import CallVisitForm
 
 
 class VisitListView(LoginRequiredMixin, ListView):
     template_name                   = 'visits/visit_list_view.html'
-    queryset                        = CallVisit.objects.all()
+    queryset                        = CallVisit.objects.all().order_by('-timestamp')
 
 
 class VisitCreateView(LoginRequiredMixin, View):
@@ -24,12 +24,10 @@ class VisitCreateView(LoginRequiredMixin, View):
         """
         Returns list of all allocated calls
         """
-        # r = CallAllocation.objects.get(pk=id)
-        # k = r.call_allocation_id.filter(call_status_final=True)
-        # print(k)
-        object                      = get_object_or_404(CallAllocation,pk=id)
-        form                        = CallVisitForm(instance=object)
-        print(form.instance.engineer_assigned)
+        object                      = CallAllocation.objects.filter(call=id).order_by('-timestamp').first()
+        if not object:
+            raise Http404
+        form                        = CallVisitForm()
         context                     = {
             'form'                  : form,
             'object'                : object
@@ -46,6 +44,7 @@ class VisitCreateView(LoginRequiredMixin, View):
             instance                = form.save(commit=False)
             object                  = get_object_or_404(CallAllocation, pk=id)
             instance.callallocation_id = object
+            instance.call_id        = object.call
             if request.POST['call_status'] == 'Closed':
                 instance.call_status_final = False
             else:

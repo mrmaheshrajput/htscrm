@@ -7,8 +7,10 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import View
 from django.urls import reverse
 
+from calls.models import CallRegister
 from customers.models import ClientDetails
 from customers.forms import ClientForm
+
 
 class JSONResponseMixin:
 
@@ -40,7 +42,7 @@ class CustomerCreateView(LoginRequiredMixin, View):
         if next == reverse('customers:customer_create_view'):
             next            = None
         if not next:
-            next            = reverse('customers:customer_detail_view')
+            next            = reverse('customers:customer_list_view')
         if form.is_valid():
             instance            = form.save(commit=False)
             instance.created_by = self.request.user
@@ -51,11 +53,23 @@ class CustomerCreateView(LoginRequiredMixin, View):
         return redirect(next)
 
 
-class CustomerDetailView(LoginRequiredMixin, JSONResponseMixin, View):
-    template_name           = 'customers/customer_detail_view.html'
+class CustomerListView(LoginRequiredMixin, JSONResponseMixin, View):
+    template_name           = 'customers/customer_list_view.html'
 
     def get(self, request):
         queryset            = ClientDetails.objects.all().order_by('-timestamp')
+        for i in queryset:
+            j = i.call_of.only('pk')
+            counter = 0
+            if j:
+                counter += len(j)
+                for k in j:
+                    l = k.mother_call_id.filter(call_id=k.pk).only('call_visit_final_notes')
+                    for m in l:
+                        if m:
+                            if m.call_status_final == False:
+                                counter -= 1
+                i.pending_call = counter
         context             = {
             "objects"       : queryset
         }
@@ -88,7 +102,7 @@ class CustomerListApi(LoginRequiredMixin, JSONResponseMixin, View):
 
 
 class CustomerDeleteView(LoginRequiredMixin, View):
-    template_name       = 'customers/customer_detail_view.html'
+    template_name       = 'customers/customer_list_view.html'
 
     def post(self, request):
         try:
@@ -98,9 +112,9 @@ class CustomerDeleteView(LoginRequiredMixin, View):
         if instance:
             instance.delete()
             messages.add_message(request, messages.INFO, 'Success - Customer deleted')
-            return redirect('customers:customer_detail_view')
+            return redirect('customers:customer_list_view')
         messages.add_message(request, messages.INFO, 'Failed - Details provided are invalid!')
-        return redirect('customers:customer_detail_view')
+        return redirect('customers:customer_list_view')
 
 
 class CustomerEditView(LoginRequiredMixin, View):
@@ -117,7 +131,7 @@ class CustomerEditView(LoginRequiredMixin, View):
             }
             return render(request, self.template_name, context)
         messages.add_message(request, messages.INFO, 'Failed - Invalid data!')
-        return redirect('customers:customer_detail_view')
+        return redirect('customers:customer_list_view')
 
     def post(self, request, id):
         form                = ClientForm(request.POST or None)
@@ -134,6 +148,20 @@ class CustomerEditView(LoginRequiredMixin, View):
                         edit_datetime       = datetime.datetime.now()
                         )
             messages.add_message(request, messages.INFO, 'Success - Customer edited successfully')
-            return redirect('customers:customer_detail_view')
+            return redirect('customers:customer_list_view')
         messages.add_message(request, messages.INFO, 'Failed - Invalid details!')
-        return redirect('customers:customer_detail_view')
+        return redirect('customers:customer_list_view')
+
+
+class CustomerDetailView(LoginRequiredMixin, View):
+    template_name                    = 'customers/customer_detail_view.html'
+
+    def get(self, request, id):
+        id_                         = id or None
+        customer                    = get_object_or_404(ClientDetails, pk=id_)
+        queryset                    = CallRegister.objects.filter(customer=id_)
+        context                     = {
+            'objects'               : queryset,
+            'customer'              : customer
+        }
+        return render(request, self.template_name, context)

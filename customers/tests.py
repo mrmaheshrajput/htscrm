@@ -60,7 +60,7 @@ class CustomerTestCases(TestCase):
 
 
     def test_customer_page_without_login(self):
-        r           = self.client.get(reverse('customers:customer_detail_view'))
+        r           = self.client.get(reverse('customers:customer_list_view'))
         self.assertEqual(r.status_code, 302)
 
 
@@ -72,7 +72,7 @@ class CustomerTestCases(TestCase):
     def test_customer_page_after_login(self):
         user_login = self.client.login(username=self.user.email, password='test@test  ')
         self.assertTrue(user_login)
-        response = self.client.get(reverse('customers:customer_detail_view'))
+        response = self.client.get(reverse('customers:customer_list_view'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.customer.name)
         self.assertContains(response, self.customer.contact_number)
@@ -89,7 +89,7 @@ class CustomerTestCases(TestCase):
         request = self.client.post(reverse('customers:customer_create_view'), data)
         self.assertEqual(request.status_code, 302)
 
-        response = self.client.get(reverse('customers:customer_detail_view'))
+        response = self.client.get(reverse('customers:customer_list_view'))
         self.assertEqual(response.status_code, 200)
 
         print(response.content)
@@ -108,7 +108,7 @@ class CustomerTestCases(TestCase):
         request = self.client.post(reverse('customers:customer_create_view'), data)
         self.assertEqual(request.status_code, 302)
 
-        response = self.client.get(reverse('customers:customer_detail_view'))
+        response = self.client.get(reverse('customers:customer_list_view'))
         self.assertEqual(response.status_code, 200)
 
         self.assertIn(b'Failed', response.content)
@@ -125,16 +125,16 @@ class CustomerTestCases(TestCase):
         request = self.client.post(reverse('customers:customer_create_view'), data)
         self.assertEqual(request.status_code, 302)
 
-        response = self.client.get(reverse('customers:customer_detail_view'))
+        response = self.client.get(reverse('customers:customer_list_view'))
         self.assertEqual(response.status_code, 200)
 
         self.assertIn(b'Failed', response.content)
         self.assertNotIn(b'Umrao', response.content)
 
 
-    def test_customer_detail_view_post_request(self):
+    def test_customer_list_view_post_request(self):
         self.client.force_login(self.user)
-        request = self.client.post(reverse('customers:customer_detail_view'),
+        request = self.client.post(reverse('customers:customer_list_view'),
                     {'id':self.customer.id})
         self.assertEqual(request.status_code, 200)
         self.assertIn(self.customer.name, request.content.decode('utf8'))
@@ -157,7 +157,7 @@ class CustomerTestCases(TestCase):
             data=data)
         self.assertEqual(request.status_code, 302)
 
-        response    = self.client.get(reverse('customers:customer_detail_view'))
+        response    = self.client.get(reverse('customers:customer_list_view'))
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Success', response.content)
         self.assertNotIn(b'GoGo Go', response.content)
@@ -170,7 +170,7 @@ class CustomerTestCases(TestCase):
             data=data)
         self.assertEqual(request.status_code, 302)
 
-        response    = self.client.get(reverse('customers:customer_detail_view'))
+        response    = self.client.get(reverse('customers:customer_list_view'))
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Failed', response.content)
         self.assertIn(b'GoGo Go', response.content)
@@ -204,7 +204,7 @@ class CustomerTestCases(TestCase):
     #                     data=data)
     #     self.assertEqual(request.status_code, 302)
     #
-    #     response    = self.client.get(reverse('customers:customer_detail_view'))
+    #     response    = self.client.get(reverse('customers:customer_list_view'))
     #     self.assertEqual(response.status_code, 200)
     #     self.assertNotIn(b'GoGo Go', response.content)
     #     self.assertIn(b'Begum', response.content)

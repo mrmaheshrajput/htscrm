@@ -20,7 +20,7 @@ class LoginView(View):
         user            = authenticate(request, username=email, password=password)
         if user is not None:
             login(request, user)
-            return redirect('calls:call_register_view')
+            return redirect('calls:calls_list_view')
         else:
             return render(request, self.template_name, {'error': 'Email or password is incorrect'})
 

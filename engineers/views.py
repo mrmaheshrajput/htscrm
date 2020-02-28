@@ -8,13 +8,18 @@ from django.views.generic import View
 from engineers.forms import EngineerAddForm
 from engineers.models import Engineer
 
+from calls.models import CallAllocation
+
 class EngineerView(LoginRequiredMixin, View):
-    template_name = 'engineers/engineer_view.html'
+    template_name           = 'engineers/engineer_list_view.html'
 
     def post(self, request):
-        form            = EngineerAddForm(request.POST or None)
+        """
+        Adds new engineer from engineer_list_view page modal
+        """
+        form                = EngineerAddForm(request.POST or None)
         if form.is_valid():
-            instance    = form.save(commit=False)
+            instance        = form.save(commit=False)
             instance.added_by = self.request.user
             instance.save()
             messages.add_message(request, messages.INFO, 'Success - Engineer added successfully')
@@ -23,21 +28,27 @@ class EngineerView(LoginRequiredMixin, View):
         return redirect('engineers:engineer_view')
 
     def get(self, request):
-        queryset        = Engineer.objects.all()
-        context         = {
+        """
+        Returns list of all engineers
+        """
+        queryset            = Engineer.objects.all()
+        context             = {
             "objects"   : queryset
         }
         return render(request, self.template_name, context)
 
 
 class EngineerDeleteView(LoginRequiredMixin, View):
-    template_name       = 'engineers/engineer_view.html'
+    template_name           = 'engineers/engineer_list_view.html'
 
     def post(self, request):
+        """
+        Delete engineer through modal form
+        """
         try:
-            instance    = Engineer.objects.get(pk=request.POST['engineer-id'])
+            instance        = Engineer.objects.get(pk=request.POST['engineer-id'])
         except Engineer.DoesNotExist:
-            instance    = None
+            instance        = None
         if instance:
             instance.delete()
             messages.add_message(request, messages.INFO, 'Success - Engineer deleted')
@@ -47,9 +58,13 @@ class EngineerDeleteView(LoginRequiredMixin, View):
 
 
 class EngineerEditView(LoginRequiredMixin, View):
-    template_name           = 'engineers/engineer_edit.html'
+    template_name           = 'engineers/engineer_edit_view.html'
 
     def post(self, request):
+        """
+        Edits engineer by updating all existing details from
+        engineer_list_view page modal
+        """
         form                = EngineerAddForm(request.POST or None)
         if form.is_valid():
             id              = request.POST['eng-id']
@@ -66,3 +81,15 @@ class EngineerEditView(LoginRequiredMixin, View):
             return redirect('engineers:engineer_view')
         messages.add_message(request, messages.INFO, 'Failed - Invalid details!', fail_silently=True)
         return redirect('engineers:engineer_view')
+
+
+class EngineerDetailView(LoginRequiredMixin, View):
+    template_name           = 'engineers/engineer_detail_view.html'
+
+    def get(self, request, id):
+        """
+        Returns specific engineer, allocated calls and visits
+        """
+        id_                 = id or None
+        queryset            = CallAllocation.objects.filter(engineer_assigned=id_)
+        return render(request, self.template_name, {'objects': queryset})
