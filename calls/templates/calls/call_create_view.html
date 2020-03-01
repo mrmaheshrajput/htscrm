@@ -35,6 +35,7 @@
                     <div class="form-group awesomplete">
                       <label class="bmd-label-floating">Type Existing Customer Name</label>
                       <input type="text" class="form-control" name="customer" id="customer">
+                      <input type="hidden" name="customer-id" id="customer-id">
                     </div>
                   </div>
                   <div class="col-md-3">
@@ -223,8 +224,16 @@
 var ajax = new XMLHttpRequest();
 ajax.open("GET", "{% url 'customers:customer_list_api' %}", true);
 ajax.onload = function() {
-	var list = JSON.parse(ajax.responseText).map(function(i) { return i.fields.name; });
-	new Awesomplete(document.querySelector("#customer"),{ list: list });
+	var list = JSON.parse(ajax.responseText).map(function(i)
+    { return {label: i.fields.name, value: i.pk}; }
+    );
+	new Awesomplete(document.querySelector("#customer"),{ list: list,
+  // insert label instead of value into the input.
+  replace: function(suggestion){
+    $("#customer-id").val(suggestion.value);
+    this.input.value = suggestion.label;
+  }
+  });
 };
 ajax.send();
 
@@ -232,7 +241,6 @@ var ajaxTwo = new XMLHttpRequest();
 ajaxTwo.open("GET", "{% url 'calls:call_complain_api' %}", true);
 ajaxTwo.onload = function() {
 	var complaints = JSON.parse(ajaxTwo.responseText).map(function(i) { return i.fields.complaint_nature; });
-  console.log(complaints);
 	new Awesomplete(document.querySelector("#complaints"),{ list: complaints });
 };
 ajaxTwo.send();

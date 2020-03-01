@@ -38,6 +38,7 @@
                       <input type="hidden" value="{{ object.pk }}" name="call-id">
                       <input type="hidden" value="{{ request.path }}" name="next">
                       <input type="text" class="form-control" name="customer" id="customer" value="{{ object.customer.name }}">
+                      <input type="hidden" name="customer-id" id="customer-id" value="{{ object.customer.id }}">
                     </div>
                   </div>
                 </div>
@@ -125,8 +126,16 @@
   var ajax = new XMLHttpRequest();
   ajax.open("GET", "{% url 'customers:customer_list_api' %}", true);
   ajax.onload = function() {
-  	var list = JSON.parse(ajax.responseText).map(function(i) { return i.fields.name; });
-  	new Awesomplete(document.querySelector("#customer"),{ list: list });
+  	var list = JSON.parse(ajax.responseText).map(function(i)
+      { return {label: i.fields.name, value: i.pk}; }
+      );
+  	new Awesomplete(document.querySelector("#customer"),{ list: list,
+    // insert label instead of value into the input.
+    replace: function(suggestion){
+      $("#customer-id").val(suggestion.value);
+      this.input.value = suggestion.label;
+    }
+    });
   };
   ajax.send();
 

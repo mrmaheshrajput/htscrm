@@ -92,7 +92,6 @@ class CustomerTestCases(TestCase):
         response = self.client.get(reverse('customers:customer_list_view'))
         self.assertEqual(response.status_code, 200)
 
-        print(response.content)
         self.assertIn(b'Success', response.content)
         self.assertIn(b'Umrao', response.content)
 
@@ -183,28 +182,63 @@ class CustomerTestCases(TestCase):
         self.assertIn(b'GoGo Go', response.content)
 
 
-    # def test_customer_edit_view_get_request_invalid_id(self):
-    #     self.client.force_login(self.user)
-    #     response = self.client.get(reverse('customers:customer_edit_view', kwargs={'id':self.customer.id + 1}))
-    #     self.assertEqual(response.status_code, 302)
-    #     self.assertIn(b'Failed', response.content)
+    def test_customer_edit_view_get_request_invalid_id(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('customers:customer_edit_view', kwargs={'id':self.customer.id + 1}), follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Failed', response.content)
 
 
-    # def test_customer_edit_view_post_request_valid(self):
-    #     self.client.force_login(self.user)
-    #     data = {
-    #         'name': 'Begum Jaan',
-    #         'contact_number': '989878678',
-    #         'calling_number': '9898887888',
-    #         'address': '1234, Main Street',
-    #         'pin': '122002'
-    #     }
-    #     request = self.client.post(reverse('customers:customer_edit_view',
-    #                                 kwargs={'id':self.customer.id}),
-    #                     data=data)
-    #     self.assertEqual(request.status_code, 302)
-    #
-    #     response    = self.client.get(reverse('customers:customer_list_view'))
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertNotIn(b'GoGo Go', response.content)
-    #     self.assertIn(b'Begum', response.content)
+    def test_customer_edit_view_post_valid_details(self):
+        self.client.force_login(self.user)
+        data = {
+            'name'              : 'Begum Jaan',
+            'contact_number'    : '9898786788',
+            'calling_number'    : '9898887888',
+            'address'           : '1234, Main Street',
+            'city'              : 'Ho Chi Min City',
+            'state'             : 'Wuhan',
+            'pin'               : '122002'
+            }
+        response = self.client.post(reverse('customers:customer_edit_view',
+                        kwargs={'id':self.customer.id}), data, follow=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(b'GoGo Go', response.content)
+        self.assertIn(b'Begum', response.content)
+
+
+    def test_customer_edit_view_post_invalid_number(self):
+        self.client.force_login(self.user)
+        data = {
+            'name'              : 'Murad Khan',
+            'contact_number'    : '989878678',
+            'calling_number'    : '9898887888',
+            'address'           : '1234, Main Street',
+            'city'              : '',
+            'state'             : '',
+            'pin'               : '122002'
+            }
+        response = self.client.post(reverse('customers:customer_edit_view',
+                        kwargs={'id':self.customer.id}), data, follow=True)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(b'Murad', response.content)
+        self.assertIn(b'GoGo Go', response.content)
+
+
+    def test_customer_detail_view_valid_id(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('customers:customer_detail_view',
+                    kwargs={'id':self.customer.id}))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'GoGo Go', response.content)
+
+
+    def test_customer_detail_view_invalid_id(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse('customers:customer_detail_view',
+                    kwargs={'id':self.customer.id + 1}))
+        self.assertEqual(response.status_code, 404)
+        self.assertNotIn(b'GoGo Go', response.content)
+        self.assertIn(b'not found', response.content)

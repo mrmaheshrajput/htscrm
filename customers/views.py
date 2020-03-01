@@ -97,7 +97,7 @@ class CustomerListView(LoginRequiredMixin, JSONResponseMixin, View):
 
 class CustomerListApi(LoginRequiredMixin, JSONResponseMixin, View):
     def get(self, request):
-        data                = serializers.serialize('json', ClientDetails.objects.all().distinct('name'), fields=('name'))
+        data                = serializers.serialize('json', ClientDetails.objects.all(), fields=('name'))
         return HttpResponse(data)
 
 

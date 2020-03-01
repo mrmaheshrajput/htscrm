@@ -86,22 +86,19 @@ class CallRegisterView(LoginRequiredMixin, View):
 
     def get(self, request):
         """
-        Returns call register form from forms.py
+        Returns template to register call with form from forms.py
         """
         form                        = CallRegisterForm()
         return render(request, self.template_name, {'form':form})
 
     def post(self, request):
         """
-        Registers new call after finding customer by name (to change to id)
+        Registers new call against passed customer id
         """
         form                        = CallRegisterForm(request.POST or None)
         if form.is_valid():
             instance                = form.save(commit=False)
-            # Getting only ONE customer from db
-            # that matches passed name
-            # MUST BE CHANGED
-            instance.customer       = ClientDetails.objects.filter(name=request.POST['customer']).first()
+            instance.customer       = get_object_or_404(ClientDetails, pk=request.POST['customer-id'])
             instance.added_by       = self.request.user
             instance.save()
             messages.add_message(request, messages.INFO, 'Success - Call added successfully!')
@@ -190,7 +187,7 @@ class CallEditView(LoginRequiredMixin, View):
             # that matches passed name
             # MUST BE CHANGED
             CallRegister.objects.filter(pk=id).update(
-                customer            = ClientDetails.objects.filter(name=request.POST['customer']).first(),
+                customer            = get_object_or_404(ClientDetails, pk=request.POST['customer-id']),
                 complaint_nature    = form.cleaned_data['complaint_nature'],
                 brand               = form.cleaned_data['brand'],
                 product_name        = form.cleaned_data['product_name'],
