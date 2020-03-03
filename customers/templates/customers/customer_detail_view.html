@@ -31,33 +31,29 @@
                 Call registered on: {{ item.timestamp }}<br>
                 By: {{ item.added_by }}
               </p>
-              <div class="text-center">
+              <div class="col-md-12">
+                <center>
                 <p>
-                  Call status:
                   {% for object in item.mother_call_id.all %}
+                    <h3>Visited on: {{ object.visit_date_time|date }}</h3><br>
+                    Call status:
                     {% if object.call_status_final|safe != "False" %}
-                    <span class="text-danger">Open</span>
-                    <br>
+                      <span class="text-danger">Open</span>
                     {% else %}
-                    <span class="text-success">Closed</span>
-                    <br>
+                      <span class="text-success">Closed</span>
                     {% endif %}
-                    Reason: {{ object.call_visit_final_notes }}
-                  {% empty %}
-                    <span class="text-warning">Visit Pending</span>
-                  {% endfor %}
-                </p>
-                {% if item.edited_by %}
-                  <p class="text-muted">Call edited by {{ item.edited_by }} on {{ item.edit_datetime }}</p>
-                {% endif %}
-                <p>
-                  {% for object in item.mother_call_id.all %}
-                    Visited on: {{ object.visit_date_time|date }}<br>
+                      <br>
+                    Reason: {{ object.call_visit_final_notes }}<br>
+                    Visited by: {{ object.serviced_by }}<br>
                     Visit status: {{ object.get_visit_status_display }}<br>
                     Outcome: {{ object.outcome }}<br>
                     Visit added on: {{ object.timestamp }}
+                    <hr>
+                    {% empty %}
+                    <span class="text-warning">Call Visit Pending</span>
                   {% endfor %}
                 </p>
+                </center>
               </div>
               <table class="table">
                 <tbody>
@@ -100,6 +96,9 @@
                   </tr>
                 </tbody>
               </table>
+              {% if item.edited_by %}
+                <p class="text-muted pull-right">Call edited by {{ item.edited_by }} on {{ item.edit_datetime }}</p>
+              {% endif %}
             </div>
           </div>
           {% empty %}

@@ -27,29 +27,86 @@
           <div class="card">
             <div class="card-body">
               <h2>Visit Details</h2>
-              <ul>
-                <li>Engineer assigned: {{ object.callallocation_id.engineer_assigned.engineer_name }}</li>
-                <li>Engineer visited: {{ object.serviced_by.engineer_name }}</li>
-                <li>Visit Status: {{ object.get_visit_status_display }}</li>
-                <li>Date time: {{ object.visit_date_time }}</li>
-                <li>Outcome: {{ object.outcome }}</li>
-                <li>Call status: {{ object.call_status_final }}</li>
-                <li>Call status reason: {{ object.call_visit_final_notes }}</li>
-                <li>Visit added by: {{ object.added_by }}, on {{ object.timestamp}}</li>
-              </ul>
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td>Engineer assigned :</td>
+                    <td>
+                      {{ object.callallocation_id.engineer_assigned.engineer_name }}<br>
+                      On {{ object.callallocation_id.timestamp }} by {{ object.callallocation_id.added_by}}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Engineer visited :</td>
+                    <td>{{ object.serviced_by.engineer_name }}</td>
+                  </tr>
+                  <tr>
+                    <td>Engineer visited on :</td>
+                    <td>{{ object.visit_date_time|date }}</td>
+                  </tr>
+                  <tr>
+                    <td>Visit Status :</td>
+                    <td>{{ object.get_visit_status_display }}</td>
+                  </tr>
+                  <tr>
+                    <td>Visit Outcome:</td>
+                    <td>{{ object.outcome }}</td>
+                  </tr>
+                  <tr>
+                    <td>Final Call status:</td>
+                    <td>{{ object.call_status_final }}</td>
+                  </tr>
+                  <tr>
+                    <td>Call status reason:</td>
+                    <td>{{ object.call_visit_final_notes }}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="pull-right text-muted">Visit added by: {{ object.added_by }}, on {{ object.timestamp}}</p>
             </div>
           </div>
         </div>
         <div class="col-md-4">
           <div class="card">
             <div class="card-body">
-              <h2>Customer Details</h2>
-              <ul>
-                <li>{{ object.callallocation_id.call.customer.name }}</li>
-                <li>{{ object.callallocation_id.call.customer.address }}</li>
-                <li>{{ object.callallocation_id.call.customer.contact_number }}</li>
-                <li>{{ object.callallocation_id.call.customer.calling_number }}</li>
-              </ul>
+              <h2>Call Details</h2>
+              <table class="table">
+                <tbody>
+                  <tr>
+                    <td>Customer :</td>
+                    <td><a href="{% url 'customers:customer_detail_view' object.callallocation_id.call.customer.id %}">{{ object.callallocation_id.call.customer.name }}</a></td>
+                  </tr>
+                  <tr>
+                    <td>Address :</td>
+                    <td>{{ object.callallocation_id.call.customer.address }}</td>
+                  </tr>
+                  <tr>
+                    <td>Contact no. :</td>
+                    <td>{{ object.callallocation_id.call.customer.contact_number }}</td>
+                  </tr>
+                  <tr>
+                    <td>Complaint :</td>
+                    <td>{{ object.callallocation_id.call.complaint_nature }}</td>
+                  </tr>
+                  <tr>
+                    <td>Product brand :</td>
+                    <td>{{ object.callallocation_id.call.brand }}</td>
+                  </tr>
+                  <tr>
+                    <td>Cust. Pref. Appnt. Date :</td>
+                    <td>
+                      {{ object.callallocation_id.call.appointment_date }}<br>
+                      {{ object.callallocation_id.call.appointment_time }}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Call added on :</td>
+                    <td>{{ object.callallocation_id.call.timestamp }}</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="text-muted">Call added by: {{ object.callallocation_id.call.added_by }}, on {{ object.callallocation_id.call.timestamp}}</p>
+              <center><a class="btn btn-round" href="{% url 'calls:call_detail_view' object.callallocation_id.call.id %}">View Call</a></center>
             </div>
           </div>
         </div>

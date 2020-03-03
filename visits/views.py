@@ -22,7 +22,10 @@ class VisitCreateView(LoginRequiredMixin, View):
 
     def get(self, request, id):
         """
-        Returns list of all allocated calls
+        Checks passed call id with call allocation modal, if call
+        found in call allocation i.e. call is allocated then it is
+        passed as object to be returned in post request.
+        Returns visit create template.
         """
         object                      = CallAllocation.objects.filter(call=id).order_by('-timestamp').first()
         if not object:
@@ -36,11 +39,12 @@ class VisitCreateView(LoginRequiredMixin, View):
 
     def post(self, request, id):
         """
-        Saves new call visit by taking call allocation id from url
+        Saves new call visit by taking call allocation id which
+        was passed in object in get request.
+        Mind call_status is modified to put in call_status
         """
         form                        = CallVisitForm(request.POST or None)
         if form.is_valid():
-            print(form.cleaned_data)
             instance                = form.save(commit=False)
             object                  = get_object_or_404(CallAllocation, pk=id)
             instance.callallocation_id = object
@@ -53,9 +57,9 @@ class VisitCreateView(LoginRequiredMixin, View):
             instance.save()
             CallAllocation.objects.filter(pk=id).update(status = 'C')
             messages.add_message(request, messages.INFO, 'Success - Call visit added successfully!')
-            return redirect('visits:visit_list_view')
+            return redirect(reverse('visits:visit_list_view'))
         messages.add_message(request, messages.INFO, 'Failed - Invalid details')
-        return redirect(reverse('visits:visit_create_view', kwargs={'id':id}))
+        return redirect(reverse('visits:visit_list_view'))
 
 
 class VisitDetailView(LoginRequiredMixin, View):

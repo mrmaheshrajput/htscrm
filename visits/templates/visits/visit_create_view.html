@@ -37,8 +37,6 @@
                     <div class="form-group">
                       <label class="bmd-label-floating">Serviced by</label>
                       {{ form.serviced_by }}
-                      <!-- <input type="hidden" name="callallocation_id" value="{{ object.id }}"> -->
-                      <!-- <input type="text" class="form-control" name="name" value="{{ object.engineer_assigned.engineer_name }}"> -->
                     </div>
                   </div>
                   <div class="col-md-8">
@@ -47,7 +45,6 @@
                         <div class="row" style="margin-left:0">
                           {{ form.visit_date_time }}
                         </div>
-                      <!-- <input type="text" class="form-control" name="calling_number" value="{{ object.call.appointment_date }} {{ object.call.appointment_time|safe }}"> -->
                     </div>
                   </div>
                 </div>
@@ -67,7 +64,7 @@
                       <label>Outcome</label>
                       <div class="form-group">
                         <label class="bmd-label-floating">Complate service outcome including what problems incurred and what services provided</label>
-                        <textarea class="form-control" rows="5" name="outcome"></textarea>
+                        <textarea class="form-control" rows="5" name="outcome" required></textarea>
                       </div>
                     </div>
                   </div>
@@ -79,7 +76,7 @@
                       <label>Call status:</label>
                       <div class="form-group is-focused">
                         <label class="bmd-label-floating">(click on applicable status)</label>
-                        <input type="text" class="form-control" id="call_status" name="call_status" readonly>
+                        <input type="text" class="form-control" id="call_status" name="call_status" readonly value="Open">
                         <button type="button" class="btn btn-primary" id="call-status-open" data-id="Open"><span class="glyphicon glyphicon-record"></span> OPEN</button>
                         <button type="button" class="btn btn-secondary" id="call-status-closed" data-id="Closed"><span class="glyphicon glyphicon-saved"></span> CLOSED</button>
                       </div>
@@ -91,7 +88,7 @@
                   <div class="col-md-12">
                     <div class="form-group">
                       <label class="bmd-label-floating">Reason for call open/closure</label>
-                      <input type="text" class="form-control" name="call_visit_final_notes">
+                      <input type="text" class="form-control" name="call_visit_final_notes" required>
                     </div>
                   </div>
                 </div>
@@ -123,21 +120,7 @@
 
 {% block script %}
 
-<script src="{% static 'assets/js/plugins/moment.min.js' %}"></script>
-<script src="{% static 'assets/js/plugins/bootstrap-datetimepicker.min.js' %}"></script>
 <script>
-    // $(function () {
-    //   $('#datetimepicker').datetimepicker({
-    //                   // format: 'LT',
-    //                   // format: 'HH:mm',
-    //                   default: '{{ object.call.appointment_date|safe }} {{ object.call.appointment_time|safe }}',
-    //                   stepping: 15
-    //               });
-    // });
-    $(function () {
-                $('#datetimepicker').datetimepicker();
-            });
-
     $(document).on("click", "#call-status-open", function () {
       const pkid    = $(this).data('id');
       $("#call_status").val(pkid);
@@ -147,13 +130,5 @@
       const pkid    = $(this).data('id');
       $("#call_status").val(pkid);
     });
-
-
-  // $(document).on("click", "#copy_number", function () {
-  //   const pkid    = $(this).val;
-  //   const number  = document.getElementById('calling_number').value;
-  //   document.getElementById('contact_number').value = number;
-  //   document.getElementById('contact_number_parent').className += ' is-focused';
-  // });
 </script>
 {% endblock %}
